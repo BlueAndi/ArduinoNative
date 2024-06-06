@@ -1,0 +1,6 @@
+@mainpage Manual
+
+@defgroup Arduino Arduino
+Arduino for native environment.
+@{
+@}

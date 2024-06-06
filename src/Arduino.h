@@ -28,7 +28,7 @@
  * @brief  Arduino native
  * @author Andreas Merkle <web@blue-andi.de>
  * 
- * @addtogroup HAL
+ * @addtogroup Arduino
  *
  * @{
  */
@@ -114,3 +114,5 @@ extern unsigned long millis();
 extern void delay(unsigned long ms);
 
 #endif  /* ARDUINO_H */
+
+/** @} */

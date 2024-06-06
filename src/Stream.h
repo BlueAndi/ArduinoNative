@@ -27,6 +27,10 @@
 /**
  *  @brief  Data Stream class definition
  *  @author Gabryel Reyes <gabryelrdiaz@gmail.com>
+ * 
+ * @addtogroup Arduino
+ *
+ * @{
  */
 
 #ifndef STREAM_H
@@ -80,4 +84,5 @@ protected:
 };
 
 #endif /* STREAM_H_ */
+
 /** @} */

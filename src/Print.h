@@ -27,6 +27,10 @@
 /**
  *  @brief  Print class definition
  *  @author Gabryel Reyes <gabryelrdiaz@gmail.com>
+ * 
+ * @addtogroup Arduino
+ *
+ * @{
  */
 
 #ifndef PRINT_H
@@ -165,4 +169,5 @@ protected:
 };
 
 #endif /* PRINT_H_ */
+
 /** @} */

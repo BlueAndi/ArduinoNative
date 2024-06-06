@@ -28,7 +28,7 @@
  * @brief  Implementation of the Terminal/Console Stream
  * @author Gabryel Reyes <gabryelrdiaz@gmail.com>
  * 
- * @addtogroup HAL
+ * @addtogroup Arduino
  *
  * @{
  */
@@ -187,3 +187,5 @@ public:
  *****************************************************************************/
 
 #endif  /* TERMINAL_H */
+
+/** @} */

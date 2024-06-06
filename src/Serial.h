@@ -27,8 +27,8 @@
 /**
  * @brief  Implementation of Arduino Serial
  * @author Gabryel Reyes <gabryelrdiaz@gmail.com>
- *
- * @addtogroup HAL
+ * 
+ * @addtogroup Arduino
  *
  * @{
  */
@@ -239,4 +239,5 @@ extern Serial_ Serial;
  *****************************************************************************/
 
 #endif /* SERIAL_H */
+
 /** @} */
