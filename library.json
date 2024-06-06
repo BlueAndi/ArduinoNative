@@ -1,0 +1,19 @@
+{
+    "name": "ArduinoNative",
+    "version": "0.1.0",
+    "description": "Arduino for the native environment. It doesn't support every interface, just some of them!",
+    "authors": [{
+        "name": "Andreas Merkle",
+        "email": "web@blue-andi.de",
+        "url": "https://github.com/BlueAndi",
+        "maintainer": true
+    }],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BlueAndi/ArduinoNative"
+    },
+    "license": "MIT",
+    "dependencies": [],
+    "frameworks": "*",
+    "platforms": "*"
+}
