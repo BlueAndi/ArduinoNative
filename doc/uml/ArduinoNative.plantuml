@@ -1,0 +1,75 @@
+@startuml ArduinoNative
+
+package "Arduino SubstProxy Interfaces" as Interfaces {
+
+    interface "IPrint" as iPrint {
+
+        + {abstract} print(str : const String&) : void
+        + {abstract} print(str : const char[])  : void
+
+        + {abstract} print(value : uint8_t)     : void
+        + {abstract} print(value : uint16_t)    : void
+        + {abstract} print(value : uint32_t)    : void
+
+        + {abstract} print(value : int8_t)      : void
+        + {abstract} print(value : int16_t)     : void
+        + {abstract} print(value : int32_t)     : void
+' --- KD3!!! todo println
+
+        + {abstract} write(buffer : const uint8_t * , length: size_t ) : size_t
+    }
+
+    interface "IStream" as iStream {
+        + {abstract} available(void) : int
+        + {abstract} readBytes(buffer : uint8_t *, length : size_t ) : size_t
+    }
+
+}
+
+package "Arduino SubstProxy Devices" as Devices {
+
+    class "Serial_" as Serial_ {
+        * Serial_(stream Stream& ) : <<Ctor>>
+
+        + setStream(stream : Stream& ) : void
+        + print(str : const char[]) : void
+
+        + write(buffer : const uint8_t * , length: size_t ) : size_t
+
+        + available(void) : int
+        + readBytes(buffer : uint8_t *, length : size_t ) : size_t
+    }
+
+    Serial_ <|--- iStream : <<use>>
+    Serial_ <|... iPrint : <<realize>>
+
+' --- KD3!!! todo other methods
+
+    class "Terminal" as Terminal {
+        '* default CTor *'
+        + print(str : const char[]) : void
+
+        + write(buffer : const uint8_t * , length: size_t ) : size_t
+
+        + available(void) : int
+        + readBytes(buffer : uint8_t *, length : size_t ) : size_t
+    }
+
+    Terminal <|--- iStream : <<use>>
+    Terminal <|... iPrint : <<realize>>
+
+' --- KD3!!! todo other methods
+}
+
+package "Arduino SubstProxy Library" as Library {
+    class "Arduino" as arduNameSpaceProxy
+
+
+
+
+
+}
+
+' --
+
+@enduml
