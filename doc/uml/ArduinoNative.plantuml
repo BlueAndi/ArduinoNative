@@ -1,10 +1,10 @@
 @startuml ArduinoNative
+top to bottom direction
+' --- left to right direction
 
-package "Arduino SubstProxy Interfaces" as Interfaces {
+package "ArduinoNative Interfaces" as Interfaces {
 
     interface "IPrint" as iPrint {
-
-        + {abstract} print(str : const String&) : void
         + {abstract} print(str : const char[])  : void
 
         + {abstract} print(value : uint8_t)     : void
@@ -24,15 +24,24 @@ package "Arduino SubstProxy Interfaces" as Interfaces {
         + {abstract} readBytes(buffer : uint8_t *, length : size_t ) : size_t
     }
 
+    '* Stream.h : class Stream : public Print  *'
+    iStream <|--- iPrint : <<use>>
+    '*  TODO  <<derive>>  *'
 }
 
-package "Arduino SubstProxy Devices" as Devices {
+package "ArduinoNative Library" as DeviceClasses {
 
     class "Serial_" as Serial_ {
-        * Serial_(stream Stream& ) : <<Ctor>>
+        * Serial_(stream Stream& )
 
-        + setStream(stream : Stream& ) : void
-        + print(str : const char[]) : void
+        + setStream(stream : Stream& )    : void
+        + begin(baudrate : unsigned long) : void
+        + end()                           : void
+
+        + print(str : const char[])    : void
+
+        + print  (value : uint@_t)     : void
+        + println(value : uint@_t)     : void
 
         + write(buffer : const uint8_t * , length: size_t ) : size_t
 
@@ -40,36 +49,48 @@ package "Arduino SubstProxy Devices" as Devices {
         + readBytes(buffer : uint8_t *, length : size_t ) : size_t
     }
 
-    Serial_ <|--- iStream : <<use>>
-    Serial_ <|... iPrint : <<realize>>
+    '*    ??? iStream  <|... Serial_ : <<realize>> *'
+    iStream  <|--- Serial_ : <<use>>
+    iPrint   <|... Serial_ : <<realize>>
 
-' --- KD3!!! todo other methods
 
     class "Terminal" as Terminal {
         '* default CTor *'
         + print(str : const char[]) : void
 
+        + print  (value : uint@_t)  : void
+        + println(value : uint@_t)  : void
+
         + write(buffer : const uint8_t * , length: size_t ) : size_t
 
         + available(void) : int
         + readBytes(buffer : uint8_t *, length : size_t ) : size_t
     }
 
-    Terminal <|--- iStream : <<use>>
-    Terminal <|... iPrint : <<realize>>
+    iStream <|... Terminal : <<realize>>
+    iPrint  <|... Terminal : <<realize>>
 
 ' --- KD3!!! todo other methods
 }
 
-package "Arduino SubstProxy Library" as Library {
-    class "Arduino" as arduNameSpaceProxy
+package "ArduinoNative Application" as Library {
+    class "Arduino" as arduNameSpaceProxy  {
+
+        + setup(
+            getSystemTickFunc : (unsigned long (*)()   ),
+            systemDelayFunc   : (void (*)(unsigned long)) ) : void
+
+        + loop () : void
+    }
 
 
 
+    arduNameSpaceProxy -up-|> Terminal : <<use>>
 
+    arduNameSpaceProxy -up-|> Serial_  : <<use>>
 
 }
 
-' --
+' ---
 
 @enduml
