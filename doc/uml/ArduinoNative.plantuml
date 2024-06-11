@@ -2,6 +2,10 @@
 top to bottom direction
 ' --- left to right direction
 
+'* output detailed or not : 0 == false *'
+!$verbose = 0
+
+
 package "ArduinoNative Interfaces" as Interfaces {
 
     interface "IPrint" as iPrint {
@@ -32,12 +36,14 @@ package "ArduinoNative Interfaces" as Interfaces {
 package "ArduinoNative Library" as DeviceClasses {
 
     class "Serial_" as Serial_ {
-        * Serial_(stream Stream& )
+        # Serial_(stream : Stream& )
 
         + setStream(stream : Stream& )    : void
         + begin(baudrate : unsigned long) : void
-        + end()                           : void
+        + end(void) : void
 
+'* --- https://plantuml.com/de/preprocessing   *'
+!if ($verbose == 1)
         + print(str : const char[])    : void
 
         + print  (value : uint@_t)     : void
@@ -47,15 +53,17 @@ package "ArduinoNative Library" as DeviceClasses {
 
         + available(void) : int
         + readBytes(buffer : uint8_t *, length : size_t ) : size_t
+!endif
     }
 
-    '*    ??? iStream  <|... Serial_ : <<realize>> *'
-    iStream  <|--- Serial_ : <<use>>
+    '*   ??? iStream  <|... Serial_ : <<realize>> *'
+    '*   ??? iStream  <|--- Serial_ : <<use>>     *'
     iPrint   <|... Serial_ : <<realize>>
 
 
     class "Terminal" as Terminal {
-        '* default CTor *'
+        '* default CTor, also calls Strem-CTor *'
+!if ($verbose == 1)
         + print(str : const char[]) : void
 
         + print  (value : uint@_t)  : void
@@ -65,9 +73,10 @@ package "ArduinoNative Library" as DeviceClasses {
 
         + available(void) : int
         + readBytes(buffer : uint8_t *, length : size_t ) : size_t
+!endif
     }
 
-    iStream <|... Terminal : <<realize>>
+    '*   ???  iStream <|... Terminal : <<realize>>   *'
     iPrint  <|... Terminal : <<realize>>
 
 ' --- KD3!!! todo other methods
@@ -89,6 +98,7 @@ package "ArduinoNative Application" as Library {
 
     arduNameSpaceProxy -up-|> Serial_  : <<use>>
 
+     gTerminalStream : <<instance>> // Terminal
 }
 
 ' ---
