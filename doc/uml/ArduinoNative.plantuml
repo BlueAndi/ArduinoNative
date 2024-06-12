@@ -1,4 +1,7 @@
 @startuml ArduinoNative
+
+title ArduinoNative ClassDiagramm
+
 top to bottom direction
 ' --- left to right direction
 
@@ -18,7 +21,15 @@ package "ArduinoNative Interfaces" as Interfaces {
         + {abstract} print(value : int8_t)      : void
         + {abstract} print(value : int16_t)     : void
         + {abstract} print(value : int32_t)     : void
-' --- KD3!!! todo println
+        '* with linefeed:  *'
+        + {abstract} println(str : const char[]) : void
+        + {abstract} println(value : uint8_t)    : void
+        + {abstract} println(value : uint16_t)   : void
+        + {abstract} println(value : uint32_t)   : void
+
+        + {abstract} println(value : int8_t)     : void
+        + {abstract} println(value : int16_t)    : void
+        + {abstract} println(value : int32_t)    : void
 
         + {abstract} write(buffer : const uint8_t * , length: size_t ) : size_t
     }
