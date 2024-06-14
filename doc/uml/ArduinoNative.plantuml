@@ -1,17 +1,15 @@
 @startuml ArduinoNative
 
-title ArduinoNative ClassDiagramm
+' --- title ArduinoNative ClassDiagramm
 
-top to bottom direction
+' --- top to bottom direction
 ' --- left to right direction
 
-'* output detailed or not : 0 == false *'
-!$verbose = 0
+package "Library" as DeviceClasses {
 
+  package "Interfaces" as Interfaces {
 
-package "ArduinoNative Interfaces" as Interfaces {
-
-    interface "IPrint" as iPrint {
+    interface "Print" as iPrint {
         + {abstract} print(str : const char[])  : void
 
         + {abstract} print(value : uint8_t)     : void
@@ -21,6 +19,7 @@ package "ArduinoNative Interfaces" as Interfaces {
         + {abstract} print(value : int8_t)      : void
         + {abstract} print(value : int16_t)     : void
         + {abstract} print(value : int32_t)     : void
+
         '* with linefeed:  *'
         + {abstract} println(str : const char[]) : void
         + {abstract} println(value : uint8_t)    : void
@@ -34,17 +33,15 @@ package "ArduinoNative Interfaces" as Interfaces {
         + {abstract} write(buffer : const uint8_t * , length: size_t ) : size_t
     }
 
-    interface "IStream" as iStream {
+    interface "Stream" as iStream {
         + {abstract} available(void) : int
         + {abstract} readBytes(buffer : uint8_t *, length : size_t ) : size_t
     }
 
-    '* Stream.h : class Stream : public Print  *'
-    iStream <|--- iPrint : <<use>>
-    '*  TODO  <<derive>>  *'
-}
+    iStream <|-- iPrint : <<derive>>
+  }
 
-package "ArduinoNative Library" as DeviceClasses {
+
 
     class "Serial_" as Serial_ {
         # Serial_(stream : Stream& )
@@ -52,49 +49,18 @@ package "ArduinoNative Library" as DeviceClasses {
         + setStream(stream : Stream& )    : void
         + begin(baudrate : unsigned long) : void
         + end(void) : void
-
-'* --- https://plantuml.com/de/preprocessing   *'
-!if ($verbose == 1)
-        + print(str : const char[])    : void
-
-        + print  (value : uint@_t)     : void
-        + println(value : uint@_t)     : void
-
-        + write(buffer : const uint8_t * , length: size_t ) : size_t
-
-        + available(void) : int
-        + readBytes(buffer : uint8_t *, length : size_t ) : size_t
-!endif
     }
 
-    '*   ??? iStream  <|... Serial_ : <<realize>> *'
-    '*   ??? iStream  <|--- Serial_ : <<use>>     *'
-    iPrint   <|... Serial_ : <<realize>>
-
+    iPrint   <|.. Serial_ : <<realize>>
 
     class "Terminal" as Terminal {
-        '* default CTor, also calls Strem-CTor *'
-!if ($verbose == 1)
-        + print(str : const char[]) : void
-
-        + print  (value : uint@_t)  : void
-        + println(value : uint@_t)  : void
-
-        + write(buffer : const uint8_t * , length: size_t ) : size_t
-
-        + available(void) : int
-        + readBytes(buffer : uint8_t *, length : size_t ) : size_t
-!endif
     }
 
-    '*   ???  iStream <|... Terminal : <<realize>>   *'
-    iPrint  <|... Terminal : <<realize>>
+    iPrint  <|.. Terminal : <<realize>>
 
-' --- KD3!!! todo other methods
-}
 
-package "ArduinoNative Application" as Library {
-    class "Arduino" as arduNameSpaceProxy  {
+
+    class Arduino  <<namespace>>  {
 
         + setup(
             getSystemTickFunc : (unsigned long (*)()   ),
@@ -103,13 +69,29 @@ package "ArduinoNative Application" as Library {
         + loop () : void
     }
 
+}
+' ---  end of DeviceClasses
+
+    Terminal <-- Arduino  : <<instantiate>>
+    Serial_  <-- Arduino  : <<instantiate>>
 
 
-    arduNameSpaceProxy -up-|> Terminal : <<use>>
+    package Application {
 
-    arduNameSpaceProxy -up-|> Serial_  : <<use>>
+        class App {
+            + setup() : void
+            + loop() : void
+        }
 
-     gTerminalStream : <<instance>> // Terminal
+        Arduino ..> App : <<call>>
+
+        class main {
+            + main(argc : int, argv : char**) : int
+        }
+
+        Arduino <.. main :  <<use>>
+    }
+
 }
 
 ' ---
