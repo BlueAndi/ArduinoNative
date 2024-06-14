@@ -1,0 +1,48 @@
+@startuml Principle
+
+package "Application" {
+    class "Aaaa" as Aaaa
+}
+
+package "HAL Interfaces" {
+    interface "IXxxx" as iXxxx
+
+    note right of iXxxx
+       See ZumoHALInterfaces
+    end note
+}
+
+package "HAL ATmega32u4" {
+    class "Xxxx" as XxxxMcu
+
+    note bottom of XxxxMcu
+        MCU specific implementation.
+    end note
+}
+
+package "HAL Webots" {
+    class "Yxxx" as YxxxWebots
+
+    note bottom of YxxxWebots
+        Webots simulation specific implementation.
+    end note
+}
+
+package "HAL Native" {
+    class "Zxxx" as ZxxxNative
+
+    note bottom of ZxxxNative
+        Workstation (native) simulation specific implementation.
+    end note
+}
+
+Aaaa ...> iXxxx: <<use>>
+iXxxx <|... XxxxMcu:    <<realize>>
+iXxxx <|... YxxxWebots: <<realize>>
+iXxxx <|... ZxxxNative: <<realize>>
+
+note top of Aaaa
+    Target independed application.
+end note
+
+@enduml
