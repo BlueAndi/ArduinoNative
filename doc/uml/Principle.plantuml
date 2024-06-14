@@ -1,0 +1,38 @@
+@startuml Principle
+
+package "Application" {
+    class "Aaaa" as Aaaa
+}
+
+package "HAL Interfaces" {
+    interface "IXxxx" as iXxxx
+}
+
+package "HAL Native" {
+    class "Yxxx" as YxxxWebots
+
+    note bottom of YxxxWebots
+        Native environment specific implementation.
+    end note
+}
+
+Aaaa ...> iXxxx: <<use>>
+iXxxx <|... YxxxWebots: <<realize>>
+
+note top of Aaaa
+    Target independed application.
+end note
+
+package "Arduino Native" {
+
+    class Arduino
+}
+
+Aaaa ...> Arduino: <<use>>
+
+note bottom of Arduino
+    Provides Arduino functionality
+    for the native environment.
+end note
+
+@enduml
