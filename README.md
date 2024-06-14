@@ -21,7 +21,7 @@ This library provides for this use case some Arduino interfaces, but not all yet
 # Architecture
 
 ## The Principle
-![Principle](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://github.com/BlueAndi/ArduinoNative/blob/update_uml_docu/doc/uml/Principle.plantuml)
+![Principle](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com//BlueAndi/ArduinoNative/blob/update_uml_docu/doc/uml/Principle.plantuml)
 
 ## Detail
 
