@@ -1,0 +1,92 @@
+@startuml ArduinoNative
+
+package "Library" as DeviceClasses {
+
+  package "Interfaces" as Interfaces {
+
+    interface "Print" as iPrint {
+        + {abstract} print(str : const char[])  : void
+
+        + {abstract} print(value : uint8_t)     : void
+        + {abstract} print(value : uint16_t)    : void
+        + {abstract} print(value : uint32_t)    : void
+
+        + {abstract} print(value : int8_t)      : void
+        + {abstract} print(value : int16_t)     : void
+        + {abstract} print(value : int32_t)     : void
+
+        '* with linefeed:  *'
+        + {abstract} println(str : const char[]) : void
+        + {abstract} println(value : uint8_t)    : void
+        + {abstract} println(value : uint16_t)   : void
+        + {abstract} println(value : uint32_t)   : void
+
+        + {abstract} println(value : int8_t)     : void
+        + {abstract} println(value : int16_t)    : void
+        + {abstract} println(value : int32_t)    : void
+
+        + {abstract} write(buffer : const uint8_t * , length: size_t ) : size_t
+    }
+
+    interface "Stream" as iStream {
+        + {abstract} available(void) : int
+        + {abstract} readBytes(buffer : uint8_t *, length : size_t ) : size_t
+    }
+
+    iStream <|-- iPrint : <<derive>>
+  }
+
+
+
+    class "Serial_" as Serial_ {
+        # Serial_(stream : Stream& )
+
+        + setStream(stream : Stream& )    : void
+        + begin(baudrate : unsigned long) : void
+        + end(void) : void
+    }
+
+    iPrint   <|.. Serial_ : <<realize>>
+
+    class "Terminal" as Terminal {
+    }
+
+    iPrint  <|.. Terminal : <<realize>>
+
+
+
+    class Arduino  <<namespace>>  {
+
+        + setup(
+            getSystemTickFunc : (unsigned long (*)()   ),
+            systemDelayFunc   : (void (*)(unsigned long)) ) : void
+
+        + loop () : void
+    }
+
+}
+' ---  end of DeviceClasses
+
+    Terminal <-- Arduino  : <<instantiate>>
+    Serial_  <-- Arduino  : <<instantiate>>
+
+
+    package Application {
+
+        class App {
+            + setup() : void
+            + loop() : void
+        }
+
+        Arduino ..> App : <<call>>
+
+        class main {
+            + main(argc : int, argv : char**) : int
+        }
+
+        Arduino <.. main :  <<use>>
+    }
+
+}
+
+@enduml

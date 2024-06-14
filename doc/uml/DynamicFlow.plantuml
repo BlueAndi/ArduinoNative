@@ -1,0 +1,28 @@
+@startuml DynamicFlow
+
+autoactivate on
+
+participant main
+participant Arduino
+participant App
+
+-> main
+
+    main -> Arduino : Arduino::setup()
+
+        Arduino ->  App :   ::setup()
+        Arduino <-- App
+
+    main <-- Arduino
+
+    loop
+        main -> Arduino : Arduino::loop()
+
+            Arduino ->  App :   ::loop()
+            Arduino <-- App
+
+        main <-- Arduino
+    end loop
+
+
+@enduml
