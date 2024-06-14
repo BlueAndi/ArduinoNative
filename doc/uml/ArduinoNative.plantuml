@@ -1,10 +1,5 @@
 @startuml ArduinoNative
 
-' --- title ArduinoNative ClassDiagramm
-
-' --- top to bottom direction
-' --- left to right direction
-
 package "Library" as DeviceClasses {
 
   package "Interfaces" as Interfaces {
@@ -93,7 +88,5 @@ package "Library" as DeviceClasses {
     }
 
 }
-
-' ---
 
 @enduml
