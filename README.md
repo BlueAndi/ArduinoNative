@@ -38,7 +38,12 @@ This library provides for this use case some Arduino interfaces, but not all yet
     lib_deps =
         BlueAndi/ArduinoNative @ ~0.1.0
     ```
-2. Call the ```Arduino::setup()``` once and the ```Arduino::loop()``` in a infinite loop in your main entry point function.
+2. Add this build flags to your _platformio.ini_ in your environment:
+    ```
+    build_flags =
+        -D _USE_MATH_DEFINES
+    ```
+3. Call the ```Arduino::setup()``` once and the ```Arduino::loop()``` in a infinite loop in your main entry point function.
 
 ## Example
 See [minimal example](./examples/example/).

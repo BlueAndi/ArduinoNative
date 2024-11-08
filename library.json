@@ -1,6 +1,6 @@
 {
     "name": "ArduinoNative",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Arduino for the native environment. It doesn't support every interface, just some of them!",
     "authors": [{
         "name": "Andreas Merkle",

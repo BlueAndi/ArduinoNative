@@ -40,7 +40,9 @@
  * Compile Switches
  *****************************************************************************/
 
-#define _USE_MATH_DEFINES
+#ifndef _USE_MATH_DEFINES
+#error Please define _USE_MATH_DEFINES in your build flags.
+#endif /* _USE_MATH_DEFINES */
 
 /******************************************************************************
  * Includes
@@ -53,6 +55,9 @@
  * Macros
  *****************************************************************************/
 
+/**
+ * Constrain the given value to min. and max.
+ */
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
 #ifndef PSTR
@@ -63,6 +68,9 @@
 #define PROGMEM
 #endif
 
+/**
+ * The constant PI.
+ */
 #define PI  M_PI
 
 /******************************************************************************
