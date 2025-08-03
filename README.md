@@ -10,57 +10,67 @@ This library provides for this use case some Arduino interfaces, but not all yet
 
 ## Table of content
 
-* [Architecture](#architecture)
-  * [The Principle](#the-principle)
-  * [Detail](#detail)
-* [How to integrate the library?](#how-to-integrate-the-library)
-  * [Example](#example)
-* [Used Libraries](#used-libraries)
-* [Issues, Ideas And Bugs](#issues-ideas-and-bugs)
-* [License](#license)
-* [Contribution](#contribution)
+- [Table of content](#table-of-content)
+- [Architecture](#architecture)
+  - [The Principle](#the-principle)
+  - [Detail](#detail)
+- [How to integrate the library?](#how-to-integrate-the-library)
+  - [Example](#example)
+- [Used Libraries](#used-libraries)
+- [Issues, Ideas And Bugs](#issues-ideas-and-bugs)
+- [License](#license)
+- [Contribution](#contribution)
 
-# Architecture
+## Architecture
 
-## The Principle
+### The Principle
 
 ![Principle](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com//BlueAndi/ArduinoNative/master/doc/uml/Principle.plantuml)
 
-## Detail
+### Detail
 
 ![ArduinoNative](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/BlueAndi/ArduinoNative/master/doc/uml/ArduinoNative.plantuml)
 
 ![DynamicFlow](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/BlueAndi/ArduinoNative/master/doc/uml/DynamicFlow.plantuml)
 
-# How to integrate the library?
+## How to integrate the library?
+
 1. Add it to the _platformio.ini_ in your environment to the _lib\_deps_ section:
-    ```
+
+    ```text
     lib_deps =
-        BlueAndi/ArduinoNative @ ~0.1.0
+        BlueAndi/ArduinoNative @ ~0.2.2
     ```
+
 2. Add this build flags to your _platformio.ini_ in your environment:
-    ```
+
+    ```text
     build_flags =
         -D _USE_MATH_DEFINES
     ```
+
 3. Call the ```Arduino::setup()``` once and the ```Arduino::loop()``` in a infinite loop in your main entry point function.
 
-## Example
+### Example
+
 See [minimal example](./examples/example/).
 
-# Used Libraries
+## Used Libraries
 
 | Library                                                            | Description                                                      | License    |
 | ------------------------------------------------------------------ | ---------------------------------------------------------------- | ---------- |
 | - | - | - |
 
-# Issues, Ideas And Bugs
+## Issues, Ideas And Bugs
+
 If you have further ideas or you found some bugs, great! Create a [issue](https://github.com/BlueAndi/ArduinoNative/issues) or if you are able and willing to fix it by yourself, clone the repository and create a pull request.
 
-# License
+## License
+
 The whole source code is published under the [MIT license](http://choosealicense.com/licenses/mit/).
 Consider the different licenses of the used third party libraries too!
 
-# Contribution
+## Contribution
+
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, shall be licensed as above, without any
 additional terms or conditions.
