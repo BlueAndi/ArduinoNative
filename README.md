@@ -8,9 +8,8 @@ Projects have sometimes the need to run on different platforms. For example a ro
 
 This library provides for this use case some Arduino interfaces, but not all yet. If something is missing, feel free to contribute, which make our all lifes easier. :-)
 
-## Table of content
+## Table of content <!-- omit in toc -->
 
-- [Table of content](#table-of-content)
 - [Architecture](#architecture)
   - [The Principle](#the-principle)
   - [Detail](#detail)
