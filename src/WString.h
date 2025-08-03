@@ -96,7 +96,7 @@ public:
      *
      * @param[in] other String to copy
      */
-    String(const char* other) : m_stdStr(other)
+    String(const char* other) : m_stdStr((nullptr == other) ? "" : other)
     {
     }
 
@@ -115,7 +115,7 @@ public:
      * @param[in] other String to copy
      * @param[in] length Number of characters to copy
      */
-    String(const char* other, unsigned int length) : m_stdStr(other, length)
+    String(const char* other, unsigned int length) : m_stdStr((nullptr == other) ? "" : std::string(other, length))
     {
     }
 
