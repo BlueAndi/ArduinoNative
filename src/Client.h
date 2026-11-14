@@ -177,6 +177,11 @@ public:
      * @return If connected, it will return true otherwise false.
      */
     virtual operator bool()                                  = 0;
+
+    /* The pure write() declarations above hide the other overloads of Print,
+     * e.g. write(const char*). Make them available again.
+     */
+    using Print::write;
 };
 
 /******************************************************************************

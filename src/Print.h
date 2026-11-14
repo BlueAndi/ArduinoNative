@@ -69,8 +69,9 @@
  *****************************************************************************/
 
 /**
- * Print class.
- * Note, the source implementation is from the orignal Arduino source.
+ * Print class, the counterpart of the Arduino Print.
+ *
+ * A derived class implements write(uint8_t), everything else is built on it.
  */
 class Print
 {
@@ -159,17 +160,15 @@ public:
      */
     size_t print(char c);
 
-    /**
-     * Print a long integer.
+    /* Every integral type needs its own overload, otherwise e.g. an int
+     * argument is ambiguous, because it can be converted to several types. The
+     * 64-bit types are long or long long, depending on the host, therefore both
+     * are provided.
      *
-     * @param[in] n     Long integer
-     * @param[in] base  Number base
-     * @return Number of written characters.
-     */
-    size_t print(long n, int base = DEC);
-
-    /* Every integral type needs its own overload, otherwise e.g. a int argument
-     * is ambiguous, because it can be converted to char as well as to long.
+     * The number base is 2 to 16. Every other base, including 0 and 1, selects
+     * decimal. A negative number is printed with its sign in decimal, in every
+     * other base as two's complement of the width of its own type, e.g.
+     * print(-1, HEX) prints FFFFFFFF.
      */
 
     /**
@@ -182,7 +181,7 @@ public:
      */
     size_t print(unsigned char n, int base = DEC)
     {
-        return print(static_cast<long>(n), base);
+        return printUnsigned(n, base);
     }
 
     /**
@@ -195,7 +194,7 @@ public:
      */
     size_t print(int n, int base = DEC)
     {
-        return print(static_cast<long>(n), base);
+        return printSigned(n, static_cast<unsigned int>(n), base);
     }
 
     /**
@@ -208,7 +207,20 @@ public:
      */
     size_t print(unsigned int n, int base = DEC)
     {
-        return printNumber(static_cast<unsigned long>(n), static_cast<uint8_t>(base));
+        return printUnsigned(n, base);
+    }
+
+    /**
+     * Print a number.
+     *
+     * @param[in] n     Number to print.
+     * @param[in] base  Number base.
+     *
+     * @return Number of written characters.
+     */
+    size_t print(long n, int base = DEC)
+    {
+        return printSigned(n, static_cast<unsigned long>(n), base);
     }
 
     /**
@@ -221,8 +233,45 @@ public:
      */
     size_t print(unsigned long n, int base = DEC)
     {
-        return printNumber(n, static_cast<uint8_t>(base));
+        return printUnsigned(n, base);
     }
+
+    /**
+     * Print a number.
+     *
+     * @param[in] n     Number to print.
+     * @param[in] base  Number base.
+     *
+     * @return Number of written characters.
+     */
+    size_t print(long long n, int base = DEC)
+    {
+        return printSigned(n, static_cast<unsigned long long>(n), base);
+    }
+
+    /**
+     * Print a number.
+     *
+     * @param[in] n     Number to print.
+     * @param[in] base  Number base.
+     *
+     * @return Number of written characters.
+     */
+    size_t print(unsigned long long n, int base = DEC)
+    {
+        return printUnsigned(n, base);
+    }
+
+    /**
+     * Print a floating point number, rounded to the given number of decimal
+     * places. Not a number is printed as "nan", infinity as "inf" or "-inf".
+     *
+     * @param[in] n         Number to print.
+     * @param[in] digits    Number of decimal places. A negative value is handled as 0.
+     *
+     * @return Number of written characters.
+     */
+    size_t print(double n, int digits = 2);
 
     /**
      * Print a carriage return and new line.
@@ -242,13 +291,26 @@ public:
 private:
 
     /**
-     * Print any kind of number, depended on the number base.
+     * Print an unsigned number.
      *
      * @param[in] n     Number to print
      * @param[in] base  Number base
-     * @return Printed number of characters.
+     *
+     * @return Number of written characters.
      */
-    size_t printNumber(unsigned long n, uint8_t base);
+    size_t printUnsigned(unsigned long long n, int base);
+
+    /**
+     * Print a signed number.
+     *
+     * @param[in] n         Number to print
+     * @param[in] bitPattern    The number converted to the unsigned type of the same
+     *                          width, which is printed in a base other than decimal.
+     * @param[in] base      Number base
+     *
+     * @return Number of written characters.
+     */
+    size_t printSigned(long long n, unsigned long long bitPattern, int base);
 };
 
 /******************************************************************************
@@ -257,4 +319,4 @@ private:
 
 #endif /* PRINT_H */
 
-/** @} */
+/** @} */

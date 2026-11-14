@@ -35,6 +35,7 @@
  *****************************************************************************/
 #include "Print.h"
 
+#include <cmath>
 #include <string.h>
 
 /******************************************************************************
@@ -52,6 +53,8 @@
 /******************************************************************************
  * Prototypes
  *****************************************************************************/
+
+static int normalizeBase(int base);
 
 /******************************************************************************
  * Local Variables
@@ -101,27 +104,24 @@ size_t Print::print(char c)
     return write(c);
 }
 
-size_t Print::print(long n, int base)
+size_t Print::print(double n, int digits)
 {
-    if (base == 0)
-    {
-        return write(n);
-    }
-    else if (base == 10)
-    {
-        if (n < 0)
-        {
-            size_t t = print('-');
+    size_t written = 0U;
 
-            /* Negate in the unsigned domain, which is well defined for LONG_MIN. */
-            return printNumber(0UL - static_cast<unsigned long>(n), 10) + t;
-        }
-        return printNumber(static_cast<unsigned long>(n), 10);
+    if (true == std::isnan(n))
+    {
+        written = print("nan");
+    }
+    else if (true == std::isinf(n))
+    {
+        written = print((0.0 > n) ? "-inf" : "inf");
     }
     else
     {
-        return printNumber(static_cast<unsigned long>(n), static_cast<uint8_t>(base));
+        written = print(String(n, static_cast<unsigned int>((0 < digits) ? digits : 0)));
     }
+
+    return written;
 }
 
 size_t Print::println()
@@ -144,29 +144,29 @@ size_t Print::println(const String& s)
  * Private Methods
  *****************************************************************************/
 
-size_t Print::printNumber(unsigned long n, uint8_t base)
+size_t Print::printUnsigned(unsigned long long n, int base)
 {
-    char  buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
-    char* str = &buf[sizeof(buf) - 1];
+    String number(n, static_cast<unsigned char>(normalizeBase(base)));
 
-    *str      = '\0';
+    number.toUpperCase();
 
-    // prevent crash if called with base == 1
-    if (base < 2)
+    return print(number);
+}
+
+size_t Print::printSigned(long long n, unsigned long long bitPattern, int base)
+{
+    size_t written = 0U;
+
+    if (DEC == normalizeBase(base))
     {
-        base = 10;
+        written = print(String(n, static_cast<unsigned char>(DEC)));
+    }
+    else
+    {
+        written = printUnsigned(bitPattern, base);
     }
 
-    do
-    {
-        unsigned long m  = n;
-        n               /= base;
-        char c           = m - base * n;
-        *--str           = c < 10 ? c + '0' : c + 'A' - 10;
-    }
-    while (n);
-
-    return write(str);
+    return written;
 }
 
 /******************************************************************************
@@ -175,4 +175,16 @@ size_t Print::printNumber(unsigned long n, uint8_t base)
 
 /******************************************************************************
  * Local Functions
- *****************************************************************************/
+ *****************************************************************************/
+
+/**
+ * Get the number base which is used for printing.
+ *
+ * @param[in] base  Requested number base
+ *
+ * @return The requested base, if it is supported (2 to 16), otherwise decimal.
+ */
+static int normalizeBase(int base)
+{
+    return ((BIN <= base) && (HEX >= base)) ? base : DEC;
+}

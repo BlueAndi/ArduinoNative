@@ -57,8 +57,8 @@ public:
 
     MinimalClient() :
         Client(),
-        m_isConnected(false),
-        m_lastPort(0U)
+        m_lastPort(0U),
+        m_isConnected(false)
     {
     }
 
@@ -257,6 +257,9 @@ static void testClient(void)
     TEST_ASSERT_TRUE(static_cast<bool>(client));
     TEST_ASSERT_EQUAL_STRING("192.168.1.2", minimal.m_lastIp.toString().c_str());
     TEST_ASSERT_EQUAL_UINT16(1883U, minimal.m_lastPort);
+
+    /* The string overload of Print::write() must stay reachable through the Client. */
+    TEST_ASSERT_EQUAL_UINT(3U, client.write("abc"));
 
     client.stop();
     TEST_ASSERT_EQUAL_UINT8(0U, client.connected());
