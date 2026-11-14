@@ -62,7 +62,6 @@
 class IPAddress
 {
 public:
-
     /**
      * Constructs a IP address 0.0.0.0.
      */
@@ -157,7 +156,6 @@ public:
     String toString() const;
 
 private:
-
     uint8_t m_octets[4U]; /**< The single octets of the IP address. */
 };
 

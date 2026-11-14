@@ -51,11 +51,11 @@
  * Prototypes
  *****************************************************************************/
 
-static void          testChronoTimeBase(void);
-static void          testGpio(void);
-static void          testRandom(void);
-static void          testMacros(void);
-static void          testInjectedTimeBase(void);
+static void testChronoTimeBase(void);
+static void testGpio(void);
+static void testRandom(void);
+static void testMacros(void);
+static void testInjectedTimeBase(void);
 
 static unsigned long fakeTick(void);
 static void          fakeDelay(unsigned long ms);

@@ -104,7 +104,7 @@ static void testSize(void)
 static void testWriteOverflow(void)
 {
     cbuf buffer(4U);
-    char data[8U] = { 0 };
+    char data[8U] = {0};
 
     TEST_ASSERT_EQUAL_UINT(4U, buffer.write("abcdef", 6U));
     TEST_ASSERT_EQUAL_UINT(0U, buffer.room());
@@ -121,7 +121,7 @@ static void testWriteOverflow(void)
 static void testReadInOrderAfterDrain(void)
 {
     cbuf buffer(4U);
-    char data[8U] = { 0 };
+    char data[8U] = {0};
 
     TEST_ASSERT_EQUAL_UINT(4U, buffer.write("abcd", 4U));
     TEST_ASSERT_EQUAL_UINT(2U, buffer.read(data, 2U));
@@ -146,7 +146,7 @@ static void testReadInOrderAfterDrain(void)
 static void testWriteReusesReadSpace(void)
 {
     cbuf buffer(4U);
-    char data[8U] = { 0 };
+    char data[8U] = {0};
 
     TEST_ASSERT_EQUAL_UINT(4U, buffer.write("abcd", 4U));
     TEST_ASSERT_EQUAL_UINT(0U, buffer.room());
@@ -173,7 +173,7 @@ static void testWriteReusesReadSpace(void)
 static void testResizeAdd(void)
 {
     cbuf buffer(4U);
-    char data[16U] = { 0 };
+    char data[16U] = {0};
 
     TEST_ASSERT_FALSE(buffer.resizeAdd(0U));
 

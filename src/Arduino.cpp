@@ -69,16 +69,16 @@ static std::chrono::steady_clock::time_point getTimerStartTime();
 static GetSystemTick gGetSystemTickFunc = nullptr;
 
 /** Function pointer to delay for some time in ms. */
-static SystemDelay   gSystemDelayFunc   = nullptr;
+static SystemDelay gSystemDelayFunc = nullptr;
 
 /** Max. number of supported pins. */
-static const uint8_t MAX_PINS           = 64U;
+static const uint8_t MAX_PINS = 64U;
 
 /** Mode of every pin. There is no GPIO on the host, its just remembered. */
-static uint8_t       gPinModes[MAX_PINS]  = { 0U };
+static uint8_t gPinModes[MAX_PINS] = {0U};
 
 /** Level of every pin. There is no GPIO on the host, its just remembered. */
-static uint8_t       gPinLevels[MAX_PINS] = { 0U };
+static uint8_t gPinLevels[MAX_PINS] = {0U};
 
 /******************************************************************************
  * Public Methods

@@ -36,7 +36,6 @@
 #include <string.h>
 #include <libb64/cencode.h>
 
-
 /******************************************************************************
  * Compiler Switches
  *****************************************************************************/
@@ -140,7 +139,8 @@ static void testNoLineBreak(void)
     TEST_ASSERT_EQUAL_UINT(96U, strlen(output));
     TEST_ASSERT_NULL(strchr(output, '\n'));
     TEST_ASSERT_NULL(strchr(output, '\r'));
-    TEST_ASSERT_EQUAL_STRING("QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrL0FCQ0RFRkdI", output);
+    TEST_ASSERT_EQUAL_STRING(
+        "QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrL0FCQ0RFRkdI", output);
 }
 
 /**
@@ -149,7 +149,7 @@ static void testNoLineBreak(void)
 static void testStreaming(void)
 {
     base64_encodestate state;
-    char               output[16U] = { 0 };
+    char               output[16U] = {0};
     int                count       = 0;
 
     base64_init_encodestate(&state);

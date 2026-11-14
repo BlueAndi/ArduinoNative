@@ -76,7 +76,6 @@
 class Print
 {
 public:
-
     /**
      * Constructs a print object.
      */
@@ -289,7 +288,6 @@ public:
     size_t println(const String& s);
 
 private:
-
     /**
      * Print an unsigned number.
      *

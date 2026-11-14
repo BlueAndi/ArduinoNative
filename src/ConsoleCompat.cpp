@@ -75,10 +75,10 @@ static void handleTerminationSignal(int signalNumber);
  *****************************************************************************/
 
 /** ASCII line feed value, which the caller expects as end of line. */
-static const int ASCII_LF                     = 10;
+static const int ASCII_LF = 10;
 
 /** ASCII carriage return value, which the enter key may deliver. */
-static const int ASCII_CR                     = 13;
+static const int ASCII_CR = 13;
 
 /** Is the raw mode active and therefore the saved terminal mode valid?
  * It is accessed by a signal handler, therefore the type is signal safe.
@@ -123,8 +123,7 @@ bool ConsoleCompat::isInteractive()
 
     HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
 
-    if ((nullptr != hStdin) &&
-        (INVALID_HANDLE_VALUE != hStdin))
+    if ((nullptr != hStdin) && (INVALID_HANDLE_VALUE != hStdin))
     {
         /* A redirected standard input is a file or a pipe, only a console is a
          * character device.
@@ -170,8 +169,7 @@ bool ConsoleCompat::enterRawMode()
 
         HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
 
-        if ((nullptr != hStdin) &&
-            (INVALID_HANDLE_VALUE != hStdin) &&
+        if ((nullptr != hStdin) && (INVALID_HANDLE_VALUE != hStdin) &&
             (FALSE != GetConsoleMode(hStdin, &gSavedConsoleMode)))
         {
             /* No echo and no line editing by the console. The processed input
@@ -190,23 +188,23 @@ bool ConsoleCompat::enterRawMode()
 
         if (0 == tcgetattr(STDIN_FILENO, &gSavedTermios))
         {
-            struct termios rawMode  = gSavedTermios;
+            struct termios rawMode = gSavedTermios;
 
             /* No echo and no line editing by the terminal driver. The signal
              * generation (ISIG) is kept enabled, so CTRL-C still terminates
              * the application.
              */
-            rawMode.c_lflag        &= ~static_cast<tcflag_t>(ICANON | ECHO);
+            rawMode.c_lflag &= ~static_cast<tcflag_t>(ICANON | ECHO);
 
             /* The enter key delivers a carriage return, which is translated to
              * a line feed. That way it doesn't depend on the mode, which the
              * shell of the user had before.
              */
-            rawMode.c_iflag        |= static_cast<tcflag_t>(ICRNL);
+            rawMode.c_iflag |= static_cast<tcflag_t>(ICRNL);
 
             /* Reading returns immediately, even if nothing is available. */
-            rawMode.c_cc[VMIN]      = 0U;
-            rawMode.c_cc[VTIME]     = 0U;
+            rawMode.c_cc[VMIN]  = 0U;
+            rawMode.c_cc[VTIME] = 0U;
 
             if (0 == tcsetattr(STDIN_FILENO, TCSANOW, &rawMode))
             {
@@ -237,8 +235,7 @@ void ConsoleCompat::restoreMode()
 
         HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
 
-        if ((nullptr != hStdin) &&
-            (INVALID_HANDLE_VALUE != hStdin))
+        if ((nullptr != hStdin) && (INVALID_HANDLE_VALUE != hStdin))
         {
             (void)SetConsoleMode(hStdin, gSavedConsoleMode);
         }

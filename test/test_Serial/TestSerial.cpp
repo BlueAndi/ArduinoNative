@@ -53,10 +53,7 @@
 class LoopbackStream : public Stream
 {
 public:
-
-    LoopbackStream() :
-        Stream(),
-        m_buffer()
+    LoopbackStream() : Stream(), m_buffer()
     {
     }
 
@@ -96,7 +93,6 @@ public:
     }
 
 private:
-
     String m_buffer; /**< Looped data. */
 };
 

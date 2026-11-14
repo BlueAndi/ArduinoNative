@@ -235,7 +235,7 @@ namespace Arduino
      * functionality and call the application loop() function.
      */
     void loop();
-}
+} // namespace Arduino
 
 /**
  * Get timestamp in ms since the program is running.

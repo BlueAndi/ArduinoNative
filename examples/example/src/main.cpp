@@ -75,7 +75,7 @@ void setup() // cppcheck-suppress unusedFunction
 void loop() // cppcheck-suppress unusedFunction
 {
     uint32_t timestamp = millis();
-    uint32_t diffTime = timestamp - gTimestamp;
+    uint32_t diffTime  = timestamp - gTimestamp;
 
     if (1000U < diffTime)
     {

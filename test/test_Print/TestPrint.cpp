@@ -58,10 +58,7 @@
 class StringPrint : public Print
 {
 public:
-
-    StringPrint() :
-        Print(),
-        m_buffer()
+    StringPrint() : Print(), m_buffer()
     {
     }
 
@@ -83,7 +80,6 @@ public:
     }
 
 private:
-
     String m_buffer; /**< Collected output. */
 };
 
@@ -337,7 +333,7 @@ static void testPrintNegativeBases(void)
     TEST_ASSERT_EQUAL_STRING("37777777777", octInt.get().c_str());
 
     /* The width of long depends on the host: 4 or 8 byte. */
-    char expected[32] = { 0 };
+    char expected[32] = {0};
 
     memset(expected, 'F', sizeof(long) * 2U);
 

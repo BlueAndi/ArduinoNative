@@ -255,7 +255,7 @@ static void testSurvivesEnd(void)
 static void testWriteThrough(void)
 {
     Preferences pref;
-    char        buffer[64U] = { 0 };
+    char        buffer[64U] = {0};
 
     TEST_ASSERT_TRUE(pref.begin(NAMESPACE));
     (void)pref.putString("key", "value");
@@ -288,7 +288,7 @@ static void testSpecialCharacters(void)
     pref.end();
 
     /* The file keeps one entry per line, with the value escaped. */
-    char  buffer[64U] = { 0 };
+    char  buffer[64U] = {0};
     FILE* fd          = fopen("preferences.txt", "rb");
 
     TEST_ASSERT_NOT_NULL(fd);

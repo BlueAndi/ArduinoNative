@@ -73,12 +73,11 @@
 static const char* TEST_DIR = "tmp_test_preferences_load";
 
 /** Storage file content, in the format the implementation writes. */
-static const char* STORAGE_CONTENT =
-    "first\tname\tHello\n"
-    "first\tcount\t-42\n"
-    "first\tspecial\ta\\tb\\nc\\r\\nd\\\\e\\\\n\n"
-    "second\tname\tOther\n"
-    "second\tflag\t1\n";
+static const char* STORAGE_CONTENT = "first\tname\tHello\n"
+                                     "first\tcount\t-42\n"
+                                     "first\tspecial\ta\\tb\\nc\\r\\nd\\\\e\\\\n\n"
+                                     "second\tname\tOther\n"
+                                     "second\tflag\t1\n";
 
 /******************************************************************************
  * Public Methods

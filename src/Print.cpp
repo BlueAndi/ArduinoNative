@@ -131,8 +131,8 @@ size_t Print::println()
 
 size_t Print::println(const String& s)
 {
-    size_t n  = print(s);
-    n        += println();
+    size_t n = print(s);
+    n += println();
     return n;
 }
 

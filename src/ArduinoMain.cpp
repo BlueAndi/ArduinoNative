@@ -80,9 +80,9 @@
  *****************************************************************************/
 
 /** Application setup, provided by the application. */
-extern void        setup();
+extern void setup();
 /** Application loop, provided by the application. */
-extern void        loop();
+extern void loop();
 
 static const char* getWorkDir(int argc, char** argv);
 static bool        changeWorkDir(const char* workDir);
@@ -123,8 +123,7 @@ extern int main(int argc, char** argv)
     int         exitCode = 0;
     const char* workDir  = getWorkDir(argc, argv);
 
-    if ((nullptr != workDir) &&
-        (false == changeWorkDir(workDir)))
+    if ((nullptr != workDir) && (false == changeWorkDir(workDir)))
     {
         /* Running in the wrong directory would litter it with runtime files,
          * therefore abort.

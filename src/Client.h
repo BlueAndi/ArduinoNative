@@ -68,12 +68,10 @@
 class Client : public Stream
 {
 public:
-
     /**
      * Constructs a client.
      */
-    Client() :
-        Stream()
+    Client() : Stream()
     {
     }
 
@@ -92,7 +90,7 @@ public:
      *
      * @return If successful connected, it will return 1 otherwise 0.
      */
-    virtual int connect(IPAddress ip, uint16_t port)         = 0;
+    virtual int connect(IPAddress ip, uint16_t port) = 0;
 
     /**
      * Connect to the given host.
@@ -102,7 +100,7 @@ public:
      *
      * @return If successful connected, it will return 1 otherwise 0.
      */
-    virtual int connect(const char* host, uint16_t port)     = 0;
+    virtual int connect(const char* host, uint16_t port) = 0;
 
     /**
      * Write a single byte.
@@ -111,7 +109,7 @@ public:
      *
      * @return Number of written bytes.
      */
-    virtual size_t write(uint8_t data)                       = 0;
+    virtual size_t write(uint8_t data) = 0;
 
     /**
      * Write the given number of bytes.
@@ -128,14 +126,14 @@ public:
      *
      * @return Number of available bytes.
      */
-    virtual int available()                                  = 0;
+    virtual int available() = 0;
 
     /**
      * Read a single byte.
      *
      * @return Byte or -1 if nothing is available.
      */
-    virtual int read()                                       = 0;
+    virtual int read() = 0;
 
     /**
      * Read the given number of bytes.
@@ -145,38 +143,38 @@ public:
      *
      * @return Number of read bytes or -1 in case of an error.
      */
-    virtual int read(uint8_t* buffer, size_t size)           = 0;
+    virtual int read(uint8_t* buffer, size_t size) = 0;
 
     /**
      * Get the next byte without removing it from the receive buffer.
      *
      * @return Byte or -1 if nothing is available.
      */
-    virtual int peek()                                       = 0;
+    virtual int peek() = 0;
 
     /**
      * Wait until all data is sent.
      */
-    virtual void flush()                                     = 0;
+    virtual void flush() = 0;
 
     /**
      * Close the connection.
      */
-    virtual void stop()                                      = 0;
+    virtual void stop() = 0;
 
     /**
      * Is the client connected?
      *
      * @return If connected, it will return 1 otherwise 0.
      */
-    virtual uint8_t connected()                              = 0;
+    virtual uint8_t connected() = 0;
 
     /**
      * Is the client connected?
      *
      * @return If connected, it will return true otherwise false.
      */
-    virtual operator bool()                                  = 0;
+    virtual operator bool() = 0;
 
     /* The pure write() declarations above hide the other overloads of Print,
      * e.g. write(const char*). Make them available again.

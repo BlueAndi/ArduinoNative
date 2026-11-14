@@ -85,60 +85,61 @@ typedef struct
  *****************************************************************************/
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/**
- * Initialize the encoder state.
- *
- * @param[out] state    The encoder state.
- */
-void base64_init_encodestate(base64_encodestate* state);
+    /**
+     * Initialize the encoder state.
+     *
+     * @param[out] state    The encoder state.
+     */
+    void base64_init_encodestate(base64_encodestate* state);
 
-/**
- * Encode a single 6-bit value.
- *
- * @param[in] value 6-bit value.
- *
- * @return Base64 character
- */
-char base64_encode_value(char value);
+    /**
+     * Encode a single 6-bit value.
+     *
+     * @param[in] value 6-bit value.
+     *
+     * @return Base64 character
+     */
+    char base64_encode_value(char value);
 
-/**
- * Encode a block of data.
- *
- * @param[in]  plaintext_in     Data buffer
- * @param[in]  length_in        Data buffer size in byte
- * @param[out] code_out         Encoded data
- * @param[in,out] state_in      The encoder state.
- *
- * @return Number of written characters.
- */
-int base64_encode_block(const char* plaintext_in, int length_in, char* code_out, base64_encodestate* state_in);
+    /**
+     * Encode a block of data.
+     *
+     * @param[in]  plaintext_in     Data buffer
+     * @param[in]  length_in        Data buffer size in byte
+     * @param[out] code_out         Encoded data
+     * @param[in,out] state_in      The encoder state.
+     *
+     * @return Number of written characters.
+     */
+    int base64_encode_block(const char* plaintext_in, int length_in, char* code_out, base64_encodestate* state_in);
 
-/**
- * Finish the encoding and write the padding.
- *
- * The encoded data is terminated afterwards, therefore the buffer must provide
- * one character more than the return value. The termination is not counted.
- *
- * @param[out] code_out     Encoded data
- * @param[in,out] state_in  The encoder state.
- *
- * @return Number of written characters.
- */
-int base64_encode_blockend(char* code_out, base64_encodestate* state_in);
+    /**
+     * Finish the encoding and write the padding.
+     *
+     * The encoded data is terminated afterwards, therefore the buffer must provide
+     * one character more than the return value. The termination is not counted.
+     *
+     * @param[out] code_out     Encoded data
+     * @param[in,out] state_in  The encoder state.
+     *
+     * @return Number of written characters.
+     */
+    int base64_encode_blockend(char* code_out, base64_encodestate* state_in);
 
-/**
- * Encode a block of data in one step, incl. the string termination.
- *
- * @param[in]  plaintext_in     Data buffer
- * @param[in]  length_in        Data buffer size in byte
- * @param[out] code_out         Encoded data
- *
- * @return Number of written characters, without the string termination.
- */
-int base64_encode_chars(const char* plaintext_in, int length_in, char* code_out);
+    /**
+     * Encode a block of data in one step, incl. the string termination.
+     *
+     * @param[in]  plaintext_in     Data buffer
+     * @param[in]  length_in        Data buffer size in byte
+     * @param[out] code_out         Encoded data
+     *
+     * @return Number of written characters, without the string termination.
+     */
+    int base64_encode_chars(const char* plaintext_in, int length_in, char* code_out);
 
 #ifdef __cplusplus
 }

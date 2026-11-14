@@ -96,8 +96,7 @@ size_t fs::File::write(const uint8_t* buf, size_t size)
 {
     size_t written = 0U;
 
-    if ((nullptr != m_fd) &&
-        (nullptr != buf))
+    if ((nullptr != m_fd) && (nullptr != buf))
     {
         written = fwrite(buf, 1U, size, m_fd.get());
     }
@@ -171,9 +170,7 @@ fs::File fs::File::openNextFile(const char* mode)
         struct dirent* entry = readdir(m_dir.get());
 
         /* Skip the current and the parent directory. */
-        while ((nullptr != entry) &&
-               ((0 == strcmp(".", entry->d_name)) ||
-                   (0 == strcmp("..", entry->d_name))))
+        while ((nullptr != entry) && ((0 == strcmp(".", entry->d_name)) || (0 == strcmp("..", entry->d_name))))
         {
             entry = readdir(m_dir.get());
         }
@@ -182,23 +179,21 @@ fs::File fs::File::openNextFile(const char* mode)
         {
             std::string entryPath = m_path;
 
-            if ((false == entryPath.empty()) &&
-                ('/' != entryPath[entryPath.length() - 1U]))
+            if ((false == entryPath.empty()) && ('/' != entryPath[entryPath.length() - 1U]))
             {
                 entryPath += "/";
             }
 
-            entryPath            += entry->d_name;
+            entryPath += entry->d_name;
 
-            std::string fullPath  = toHostPath(entryPath);
+            std::string fullPath = toHostPath(entryPath);
             struct stat info;
 
-            if ((0 == stat(fullPath.c_str(), &info)) &&
-                (true == S_ISDIR(info.st_mode)))
+            if ((0 == stat(fullPath.c_str(), &info)) && (true == S_ISDIR(info.st_mode)))
             {
                 DIR* dir = opendir(fullPath.c_str());
 
-                file     = File(nullptr, dir, entryPath, m_rootPath);
+                file = File(nullptr, dir, entryPath, m_rootPath);
             }
             else
             {
@@ -242,8 +237,7 @@ std::string fs::toBinaryMode(const char* mode)
          */
         while ('\0' != mode[index])
         {
-            if (('b' != mode[index]) &&
-                ('t' != mode[index]))
+            if (('b' != mode[index]) && ('t' != mode[index]))
             {
                 result += mode[index];
             }

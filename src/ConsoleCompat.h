@@ -73,54 +73,54 @@
 namespace ConsoleCompat
 {
 
-/******************************************************************************
- * Functions
- *****************************************************************************/
+    /******************************************************************************
+     * Functions
+     *****************************************************************************/
 
-/**
- * Is the standard input connected to a terminal, which can be used
- * interactively?
- *
- * It is not the case if the standard input is redirected from a file or a pipe,
- * like in the CI. On POSIX it is not the case as well if the process runs in
- * the background, because reading from the controlling terminal would raise a
- * SIGTTIN and stop the process.
- *
- * @return If the terminal can be used interactively, it will return true
- *         otherwise false.
- */
-bool isInteractive();
+    /**
+     * Is the standard input connected to a terminal, which can be used
+     * interactively?
+     *
+     * It is not the case if the standard input is redirected from a file or a pipe,
+     * like in the CI. On POSIX it is not the case as well if the process runs in
+     * the background, because reading from the controlling terminal would raise a
+     * SIGTTIN and stop the process.
+     *
+     * @return If the terminal can be used interactively, it will return true
+     *         otherwise false.
+     */
+    bool isInteractive();
 
-/**
- * Switch the terminal to the raw mode, which means no echo and no line
- * editing by the operating system.
- *
- * The previous mode is saved and restored by restoreMode(), which is
- * registered for the program exit and for a termination by signal too. Without
- * that the shell of the user would stay without echo after the program ended.
- *
- * The key which interrupts the program is kept enabled, otherwise the
- * application couldn't be stopped with CTRL-C anymore.
- *
- * @return If successful switched, it will return true otherwise false.
- */
-bool enterRawMode();
+    /**
+     * Switch the terminal to the raw mode, which means no echo and no line
+     * editing by the operating system.
+     *
+     * The previous mode is saved and restored by restoreMode(), which is
+     * registered for the program exit and for a termination by signal too. Without
+     * that the shell of the user would stay without echo after the program ended.
+     *
+     * The key which interrupts the program is kept enabled, otherwise the
+     * application couldn't be stopped with CTRL-C anymore.
+     *
+     * @return If successful switched, it will return true otherwise false.
+     */
+    bool enterRawMode();
 
-/**
- * Restore the terminal mode, which was active before entering the raw mode.
- * It does nothing if the raw mode is not active.
- */
-void restoreMode();
+    /**
+     * Restore the terminal mode, which was active before entering the raw mode.
+     * It does nothing if the raw mode is not active.
+     */
+    void restoreMode();
 
-/**
- * Read a single byte from the terminal without blocking.
- *
- * A carriage return is reported as line feed, independent of the platform.
- * That way the caller sees the same end of line as on the target.
- *
- * @return Data byte or -1 if nothing is available.
- */
-int readByte();
+    /**
+     * Read a single byte from the terminal without blocking.
+     *
+     * A carriage return is reported as line feed, independent of the platform.
+     * That way the caller sees the same end of line as on the target.
+     *
+     * @return Data byte or -1 if nothing is available.
+     */
+    int readByte();
 
 } /* namespace ConsoleCompat */
 

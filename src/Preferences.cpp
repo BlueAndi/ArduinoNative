@@ -80,16 +80,13 @@ static std::string   unescape(const std::string& escaped);
 static const char* STORAGE_FILE_NAME = "preferences.txt";
 
 /** Separator between the namespace, the key and the value. */
-static const char SEPARATOR          = '\t';
+static const char SEPARATOR = '\t';
 
 /******************************************************************************
  * Public Methods
  *****************************************************************************/
 
-Preferences::Preferences() :
-    m_namespace(),
-    m_isOpen(false),
-    m_isReadOnly(false)
+Preferences::Preferences() : m_namespace(), m_isOpen(false), m_isReadOnly(false)
 {
 }
 
@@ -373,9 +370,7 @@ static void loadStorage(NamespaceMap& storage)
 
         while (false == isEndOfFile)
         {
-            if ((EOF == character) ||
-                ('\n' == character) ||
-                ('\r' == character))
+            if ((EOF == character) || ('\n' == character) || ('\r' == character))
             {
                 size_t keyPos = line.find(SEPARATOR);
 
@@ -385,8 +380,8 @@ static void loadStorage(NamespaceMap& storage)
 
                     if (std::string::npos != valuePos)
                     {
-                        std::string nameSpace   = line.substr(0U, keyPos);
-                        std::string key         = line.substr(keyPos + 1U, valuePos - keyPos - 1U);
+                        std::string nameSpace = line.substr(0U, keyPos);
+                        std::string key       = line.substr(keyPos + 1U, valuePos - keyPos - 1U);
 
                         storage[nameSpace][key] = unescape(line.substr(valuePos + 1U));
                     }
@@ -433,7 +428,8 @@ static void saveStorage()
         {
             for (KeyValueMap::const_iterator kvIt = nsIt->second.begin(); nsIt->second.end() != kvIt; ++kvIt)
             {
-                (void)fprintf(fd, "%s%c%s%c%s\n", nsIt->first.c_str(), SEPARATOR, kvIt->first.c_str(), SEPARATOR, escape(kvIt->second).c_str());
+                (void)fprintf(fd, "%s%c%s%c%s\n", nsIt->first.c_str(), SEPARATOR, kvIt->first.c_str(), SEPARATOR,
+                              escape(kvIt->second).c_str());
             }
         }
 
@@ -502,8 +498,7 @@ static std::string unescape(const std::string& escaped)
     {
         char character = escaped[index];
 
-        if (('\\' == character) &&
-            ((index + 1U) < escaped.length()))
+        if (('\\' == character) && ((index + 1U) < escaped.length()))
         {
             ++index;
 

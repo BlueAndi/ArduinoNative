@@ -54,11 +54,7 @@
 class MinimalClient : public Client
 {
 public:
-
-    MinimalClient() :
-        Client(),
-        m_lastPort(0U),
-        m_isConnected(false)
+    MinimalClient() : Client(), m_lastPort(0U), m_isConnected(false)
     {
     }
 
@@ -139,7 +135,6 @@ public:
     uint16_t  m_lastPort; /**< Port of the last connect. */
 
 private:
-
     bool m_isConnected; /**< Is connected? */
 };
 

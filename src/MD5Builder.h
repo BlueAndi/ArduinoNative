@@ -66,7 +66,6 @@
 class MD5Builder
 {
 public:
-
     /**
      * Constructs the MD5 builder.
      */
@@ -131,17 +130,16 @@ public:
     void getBytes(uint8_t* output);
 
 private:
-
     /** Size of the digest in byte. */
     static const size_t DIGEST_SIZE = 16U;
 
     /** Size of a single data block in byte. */
-    static const size_t BLOCK_SIZE  = 64U;
+    static const size_t BLOCK_SIZE = 64U;
 
-    uint32_t            m_state[4U];           /**< Intermediate digest state. */
-    uint32_t            m_count[2U];           /**< Number of processed bits. */
-    uint8_t             m_buffer[BLOCK_SIZE];  /**< Data block which is processed. */
-    uint8_t             m_digest[DIGEST_SIZE]; /**< The calculated digest. */
+    uint32_t m_state[4U];           /**< Intermediate digest state. */
+    uint32_t m_count[2U];           /**< Number of processed bits. */
+    uint8_t  m_buffer[BLOCK_SIZE];  /**< Data block which is processed. */
+    uint8_t  m_digest[DIGEST_SIZE]; /**< The calculated digest. */
 
     MD5Builder(const MD5Builder& builder);
     MD5Builder& operator=(const MD5Builder& builder);

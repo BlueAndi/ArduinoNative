@@ -69,25 +69,26 @@
 #ifdef _WIN32
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/**
- * Convert a date/time string to a broken down time, according to the given
- * format.
- *
- * Counterpart of the POSIX strptime(). Only the conversion specifiers are
- * supported, which the application uses. A unsupported one stops the
- * conversion, like a mismatch does.
- *
- * @param[in]  str      Date/time string, which to convert.
- * @param[in]  format   Format of the date/time string.
- * @param[out] timeInfo Broken down time, only the converted parts are written.
- *
- * @return Pointer to the first character after the converted part or nullptr
- *         in case the string doesn't match the format.
- */
-char* strptime(const char* str, const char* format, struct tm* timeInfo);
+    /**
+     * Convert a date/time string to a broken down time, according to the given
+     * format.
+     *
+     * Counterpart of the POSIX strptime(). Only the conversion specifiers are
+     * supported, which the application uses. A unsupported one stops the
+     * conversion, like a mismatch does.
+     *
+     * @param[in]  str      Date/time string, which to convert.
+     * @param[in]  format   Format of the date/time string.
+     * @param[out] timeInfo Broken down time, only the converted parts are written.
+     *
+     * @return Pointer to the first character after the converted part or nullptr
+     *         in case the string doesn't match the format.
+     */
+    char* strptime(const char* str, const char* format, struct tm* timeInfo);
 
 #ifdef __cplusplus
 }

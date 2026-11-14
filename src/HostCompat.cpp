@@ -87,15 +87,12 @@ extern "C" char* strptime(const char* str, const char* format, struct tm* timeIn
     const char* formatPtr = format;
     bool        isAborted = false;
 
-    if ((nullptr == str) ||
-        (nullptr == format) ||
-        (nullptr == timeInfo))
+    if ((nullptr == str) || (nullptr == format) || (nullptr == timeInfo))
     {
         return nullptr;
     }
 
-    while (('\0' != *formatPtr) &&
-           (false == isAborted))
+    while (('\0' != *formatPtr) && (false == isAborted))
     {
         if ('%' == *formatPtr)
         {
@@ -250,8 +247,7 @@ static const char* parseNumber(const char* str, int digits, int min, int max, in
         ++current;
     }
 
-    while ((count < digits) &&
-           (0 != isdigit(static_cast<unsigned char>(*current))))
+    while ((count < digits) && (0 != isdigit(static_cast<unsigned char>(*current))))
     {
         result = (result * 10) + (*current - '0');
 
@@ -259,9 +255,7 @@ static const char* parseNumber(const char* str, int digits, int min, int max, in
         ++count;
     }
 
-    if ((0 == count) ||
-        (min > result) ||
-        (max < result))
+    if ((0 == count) || (min > result) || (max < result))
     {
         return nullptr;
     }

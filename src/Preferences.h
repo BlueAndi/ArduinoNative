@@ -74,7 +74,6 @@
 class Preferences
 {
 public:
-
     /**
      * Constructs the preferences.
      */
@@ -217,7 +216,6 @@ public:
     size_t putString(const char* key, const String& value);
 
 private:
-
     std::string m_namespace;  /**< Name of the opened namespace. */
     bool        m_isOpen;     /**< Is a namespace opened? */
     bool        m_isReadOnly; /**< Is the opened namespace read-only? */

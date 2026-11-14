@@ -62,12 +62,10 @@
 class Stream : public Print
 {
 public:
-
     /**
      * Constructs a stream.
      */
-    Stream() :
-        Print()
+    Stream() : Print()
     {
     }
 
@@ -90,14 +88,14 @@ public:
      *
      * @return Data byte or -1 if nothing is available.
      */
-    virtual int read()      = 0;
+    virtual int read() = 0;
 
     /**
      * Get the next byte without removing it.
      *
      * @return Data byte or -1 if nothing is available.
      */
-    virtual int peek()      = 0;
+    virtual int peek() = 0;
 
     /**
      * Set the timeout for reading.
@@ -166,7 +164,6 @@ public:
     }
 
 private:
-
     unsigned long m_timeout = 1000U; /**< Timeout for reading in ms. */
 };
 

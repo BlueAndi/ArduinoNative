@@ -69,7 +69,6 @@
 class HardwareSerial : public Stream
 {
 public:
-
     /**
      * Constructs the serial interface.
      */
@@ -170,16 +169,15 @@ public:
     int peek() final;
 
 private:
-
     /** Size of the terminal input ring buffer in byte. */
     static const size_t INPUT_BUFFER_SIZE = 64U;
 
-    Stream*             m_stream;                         /**< Stream to redirect to or nullptr for the terminal. */
-    bool                m_isInputEnabled;                 /**< Is the terminal input served?                   */
-    uint8_t             m_inputBuffer[INPUT_BUFFER_SIZE]; /**< Ring buffer with the read terminal input.       */
-    size_t              m_readIndex;                      /**< Read index of the input ring buffer.            */
-    size_t              m_writeIndex;                     /**< Write index of the input ring buffer.           */
-    size_t              m_inputCount;                     /**< Number of bytes inside the input ring buffer.   */
+    Stream* m_stream;                         /**< Stream to redirect to or nullptr for the terminal. */
+    bool    m_isInputEnabled;                 /**< Is the terminal input served?                   */
+    uint8_t m_inputBuffer[INPUT_BUFFER_SIZE]; /**< Ring buffer with the read terminal input.       */
+    size_t  m_readIndex;                      /**< Read index of the input ring buffer.            */
+    size_t  m_writeIndex;                     /**< Write index of the input ring buffer.           */
+    size_t  m_inputCount;                     /**< Number of bytes inside the input ring buffer.   */
 
     HardwareSerial(const HardwareSerial& serial);
     HardwareSerial& operator=(const HardwareSerial& serial);

@@ -67,16 +67,12 @@
 class cbuf
 {
 public:
-
     /**
      * Constructs the buffer.
      *
      * @param[in] size  Buffer size in byte.
      */
-    cbuf(size_t size) :
-        m_buffer(size),
-        m_readIndex(0U),
-        m_writeIndex(0U)
+    cbuf(size_t size) : m_buffer(size), m_readIndex(0U), m_writeIndex(0U)
     {
     }
 
@@ -194,8 +190,7 @@ public:
             readCount = size;
         }
 
-        if ((nullptr != data) &&
-            (0U < readCount))
+        if ((nullptr != data) && (0U < readCount))
         {
             memcpy(data, &m_buffer[m_readIndex], readCount);
             m_readIndex += readCount;
@@ -212,7 +207,6 @@ public:
     }
 
 private:
-
     std::vector<char> m_buffer;     /**< The buffer. */
     size_t            m_readIndex;  /**< Index of the next byte to read. */
     size_t            m_writeIndex; /**< Index of the next byte to write. */

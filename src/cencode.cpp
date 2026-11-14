@@ -62,7 +62,7 @@
 static const char BASE64_ALPHABET[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /** Padding character, used to fill up the last block. */
-static const char BASE64_PADDING    = '=';
+static const char BASE64_PADDING = '=';
 
 /******************************************************************************
  * Public Methods
@@ -96,8 +96,7 @@ extern "C" char base64_encode_value(char value)
 {
     char result = BASE64_PADDING;
 
-    if ((0 <= value) &&
-        (63 >= value))
+    if ((0 <= value) && (63 >= value))
     {
         result = BASE64_ALPHABET[static_cast<int>(value)];
     }
@@ -106,14 +105,12 @@ extern "C" char base64_encode_value(char value)
 }
 
 /** Encode a block of data, see cencode.h. */
-extern "C" int base64_encode_block(const char* plaintext_in, int length_in, char* code_out, base64_encodestate* state_in)
+extern "C" int base64_encode_block(const char* plaintext_in, int length_in, char* code_out,
+                                   base64_encodestate* state_in)
 {
     int count = 0;
 
-    if ((nullptr != plaintext_in) &&
-        (nullptr != code_out) &&
-        (nullptr != state_in) &&
-        (0 < length_in))
+    if ((nullptr != plaintext_in) && (nullptr != code_out) && (nullptr != state_in) && (0 < length_in))
     {
         const char* plainChar = plaintext_in;
         const char* plainEnd  = plaintext_in + length_in;
@@ -148,10 +145,10 @@ extern "C" int base64_encode_block(const char* plaintext_in, int length_in, char
                     break;
                 }
 
-                fragment     = *plainChar++;
-                result      |= (fragment & 0x0F0) >> 4;
-                *codeChar++  = base64_encode_value(result);
-                result       = (fragment & 0x00F) << 2;
+                fragment = *plainChar++;
+                result |= (fragment & 0x0F0) >> 4;
+                *codeChar++ = base64_encode_value(result);
+                result      = (fragment & 0x00F) << 2;
 
                 /* fall through */
 
@@ -163,11 +160,11 @@ extern "C" int base64_encode_block(const char* plaintext_in, int length_in, char
                     break;
                 }
 
-                fragment     = *plainChar++;
-                result      |= (fragment & 0x0C0) >> 6;
-                *codeChar++  = base64_encode_value(result);
-                result       = (fragment & 0x03F) >> 0;
-                *codeChar++  = base64_encode_value(result);
+                fragment = *plainChar++;
+                result |= (fragment & 0x0C0) >> 6;
+                *codeChar++ = base64_encode_value(result);
+                result      = (fragment & 0x03F) >> 0;
+                *codeChar++ = base64_encode_value(result);
 
                 ++state_in->stepcount;
             }
@@ -184,8 +181,7 @@ extern "C" int base64_encode_blockend(char* code_out, base64_encodestate* state_
 {
     int count = 0;
 
-    if ((nullptr != code_out) &&
-        (nullptr != state_in))
+    if ((nullptr != code_out) && (nullptr != state_in))
     {
         char* codeChar = code_out;
 
@@ -208,7 +204,7 @@ extern "C" int base64_encode_blockend(char* code_out, base64_encodestate* state_
             break;
         }
 
-        count     = static_cast<int>(codeChar - code_out);
+        count = static_cast<int>(codeChar - code_out);
 
         /* The encoded data is terminated, like the Arduino implementation does
          * it. The caller may use the buffer as string. The termination is not
@@ -228,7 +224,7 @@ extern "C" int base64_encode_chars(const char* plaintext_in, int length_in, char
 
     base64_init_encodestate(&state);
 
-    count  = base64_encode_block(plaintext_in, length_in, code_out, &state);
+    count = base64_encode_block(plaintext_in, length_in, code_out, &state);
     count += base64_encode_blockend(&code_out[count], &state);
 
     if (nullptr != code_out)

@@ -105,8 +105,7 @@ void HardwareSerial::begin(unsigned long baudrate)
      * its own, because the serial interface of the target does neither. The
      * terminal of the host is switched to the raw mode, so it behaves the same.
      */
-    if ((false == m_isInputEnabled) &&
-        (true == ConsoleCompat::isInteractive()))
+    if ((false == m_isInputEnabled) && (true == ConsoleCompat::isInteractive()))
     {
         m_isInputEnabled = ConsoleCompat::enterRawMode();
     }

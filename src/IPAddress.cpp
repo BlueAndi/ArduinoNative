@@ -62,24 +62,22 @@ static const int OCTET_COUNT = 4;
  * Public Methods
  *****************************************************************************/
 
-IPAddress::IPAddress() :
-    m_octets{ 0U, 0U, 0U, 0U }
+IPAddress::IPAddress() : m_octets{0U, 0U, 0U, 0U}
 {
 }
 
 IPAddress::IPAddress(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4) :
-    m_octets{ octet1, octet2, octet3, octet4 }
+    m_octets{octet1, octet2, octet3, octet4}
 {
 }
 
-IPAddress::IPAddress(uint32_t address) :
-    m_octets{ 0U, 0U, 0U, 0U }
+IPAddress::IPAddress(uint32_t address) : m_octets{0U, 0U, 0U, 0U}
 {
     *this = address;
 }
 
 IPAddress::IPAddress(const IPAddress& other) :
-    m_octets{ other.m_octets[0U], other.m_octets[1U], other.m_octets[2U], other.m_octets[3U] }
+    m_octets{other.m_octets[0U], other.m_octets[1U], other.m_octets[2U], other.m_octets[3U]}
 {
 }
 
@@ -141,8 +139,7 @@ uint8_t IPAddress::operator[](int index) const
 {
     uint8_t octet = 0U;
 
-    if ((0 <= index) &&
-        (OCTET_COUNT > index))
+    if ((0 <= index) && (OCTET_COUNT > index))
     {
         octet = m_octets[index];
     }
@@ -152,12 +149,12 @@ uint8_t IPAddress::operator[](int index) const
 
 IPAddress::operator uint32_t() const
 {
-    uint32_t address  = 0U;
+    uint32_t address = 0U;
 
-    address          |= static_cast<uint32_t>(m_octets[0U]) << 24U;
-    address          |= static_cast<uint32_t>(m_octets[1U]) << 16U;
-    address          |= static_cast<uint32_t>(m_octets[2U]) << 8U;
-    address          |= static_cast<uint32_t>(m_octets[3U]) << 0U;
+    address |= static_cast<uint32_t>(m_octets[0U]) << 24U;
+    address |= static_cast<uint32_t>(m_octets[1U]) << 16U;
+    address |= static_cast<uint32_t>(m_octets[2U]) << 8U;
+    address |= static_cast<uint32_t>(m_octets[3U]) << 0U;
 
     return address;
 }

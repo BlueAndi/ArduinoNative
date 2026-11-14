@@ -63,7 +63,7 @@ static void removeTestFiles(void);
 static const char* TEST_DIR = "tmp_test_fs";
 
 /** Filesystem under test, mounted in the temporary directory. */
-static FS          gFs;
+static FS gFs;
 
 /******************************************************************************
  * Public Methods
@@ -173,8 +173,8 @@ static void testWriteRead(void)
     TEST_ASSERT_TRUE(file.seek(0U, fs::SeekEnd));
     TEST_ASSERT_EQUAL_INT(0, file.available());
 
-    char    buffer[6U] = { 0 };
-    uint8_t bytes[5U]  = { 0 };
+    char    buffer[6U] = {0};
+    uint8_t bytes[5U]  = {0};
 
     TEST_ASSERT_TRUE(file.seek(0U));
     TEST_ASSERT_EQUAL_UINT32(5U, file.readBytes(buffer, 5U));
@@ -211,7 +211,7 @@ static void testAppend(void)
  */
 static void testBinaryMode(void)
 {
-    const uint8_t data[] = { 'a', '\r', '\n', 0x1AU, 'b' };
+    const uint8_t data[] = {'a', '\r', '\n', 0x1AU, 'b'};
     File          file   = gFs.open("/a.txt", "w");
 
     TEST_ASSERT_TRUE(file);
