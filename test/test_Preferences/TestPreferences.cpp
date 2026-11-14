@@ -267,23 +267,15 @@ static void testSpecialCharacters(void)
     TEST_ASSERT_EQUAL_STRING(value, pref.getString("special", "").c_str());
     pref.end();
 
-    /* The file keeps one entry per line. */
-    FILE* fd    = fopen("preferences.txt", "rb");
-    int   lines = 0;
-    int   ch    = 0;
+    /* The file keeps one entry per line, with the value escaped. */
+    char  buffer[64U] = { 0 };
+    FILE* fd          = fopen("preferences.txt", "rb");
 
     TEST_ASSERT_NOT_NULL(fd);
-
-    while (EOF != (ch = fgetc(fd)))
-    {
-        if ('\n' == ch)
-        {
-            ++lines;
-        }
-    }
-
+    (void)fread(buffer, 1U, sizeof(buffer) - 1U, fd);
     (void)fclose(fd);
-    TEST_ASSERT_EQUAL_INT(1, lines);
+
+    TEST_ASSERT_EQUAL_STRING("test\tspecial\ta\\tb\\nc\\r\\nd\\\\e\\\\n\n", buffer);
 }
 
 /**
