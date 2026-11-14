@@ -64,6 +64,7 @@
 #include "WString.h"
 #include "Print.h"
 #include "HardwareSerial.h"
+#include "IPAddress.h"
 
 /******************************************************************************
  * Macros
