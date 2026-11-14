@@ -1,10 +1,23 @@
-name: Relase Script
+name: Release Script
 
 # Controls when the action will run.
 on:
   release:
     # A release, pre-release, or draft of a release is published.
     types: [published]
+
+# The workflow only reads the repository. Publishing to the PlatformIO registry
+# is authorized by the PLATFORMIO_AUTH_TOKEN secret, not by the GitHub token.
+permissions:
+  contents: read
+
+# Publishing the same release twice in parallel would race in the registry.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: "3.12"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,12 +38,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
           cache-dependency-path: .github/workflows/requirements.txt
 

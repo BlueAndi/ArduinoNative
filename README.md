@@ -21,7 +21,7 @@ This library provides for this use case some Arduino interfaces, but not all yet
   - [Filesystem and preferences](#filesystem-and-preferences)
   - [HostCompat](#hostcompat)
   - [Example](#example)
-- [Migration from 0.2.x to 0.3.0](#migration-from-02x-to-030)
+- [Migration from 0.2.x to 1.0.0](#migration-from-02x-to-100)
 - [Used Libraries](#used-libraries)
 - [Issues, Ideas And Bugs](#issues-ideas-and-bugs)
 - [License](#license)
@@ -65,7 +65,7 @@ Not every Arduino interface is available, just the following ones:
 
     ```text
     lib_deps =
-        BlueAndi/ArduinoNative @ ~0.3.0
+        BlueAndi/ArduinoNative @ ~1.0.0
     ```
 
 2. Add this build flags to your _platformio.ini_ in your environment:
@@ -171,7 +171,7 @@ build_flags =
 
 See [minimal example](./examples/example/).
 
-## Migration from 0.2.x to 0.3.0
+## Migration from 0.2.x to 1.0.0
 
 * `Serial_` and `Terminal` are gone. `Serial` is now a `HardwareSerial` (see _HardwareSerial.h_).
 * `Print` follows the Arduino model. A class derived from `Print` implements `write(uint8_t)` and no longer overrides `print(...)` and `println(...)`, which are provided by `Print`.
