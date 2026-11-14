@@ -132,7 +132,7 @@ public:
      * @param[in] key   Key of the key/value pair.
      * @param[in] value Value
      *
-     * @return Number of stored bytes.
+     * @return Number of stored bytes, like the ESP32 returns them, or 0 on failure.
      */
     size_t putBool(const char* key, bool value);
 
@@ -152,7 +152,7 @@ public:
      * @param[in] key   Key of the key/value pair.
      * @param[in] value Value
      *
-     * @return Number of stored bytes.
+     * @return Number of stored bytes, like the ESP32 returns them, or 0 on failure.
      */
     size_t putInt(const char* key, int32_t value);
 
@@ -172,7 +172,7 @@ public:
      * @param[in] key   Key of the key/value pair.
      * @param[in] value Value
      *
-     * @return Number of stored bytes.
+     * @return Number of stored bytes, like the ESP32 returns them, or 0 on failure.
      */
     size_t putUInt(const char* key, uint32_t value);
 
@@ -192,7 +192,7 @@ public:
      * @param[in] key   Key of the key/value pair.
      * @param[in] value Value
      *
-     * @return Number of stored bytes.
+     * @return Number of stored bytes, like the ESP32 returns them, or 0 on failure.
      */
     size_t putUChar(const char* key, uint8_t value);
 
@@ -212,7 +212,7 @@ public:
      * @param[in] key   Key of the key/value pair.
      * @param[in] value Value
      *
-     * @return Number of stored bytes.
+     * @return Number of stored bytes, like the ESP32 returns them, or 0 on failure.
      */
     size_t putString(const char* key, const String& value);
 
@@ -245,12 +245,14 @@ private:
     /**
      * Set the raw value of the given key.
      *
-     * @param[in] key   Key of the key/value pair.
-     * @param[in] value Value of the key/value pair.
+     * @param[in] key           Key of the key/value pair.
+     * @param[in] value         Value of the key/value pair, as it is kept in the storage.
+     * @param[in] storedSize    Size in byte which the target stores for this value,
+     *                          e.g. 4 for a 32-bit number. It is the return value on success.
      *
-     * @return Number of stored bytes.
+     * @return Number of stored bytes, or 0 if nothing was stored.
      */
-    size_t putValue(const char* key, const std::string& value);
+    size_t putValue(const char* key, const std::string& value, size_t storedSize);
 };
 
 /******************************************************************************

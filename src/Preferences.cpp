@@ -186,7 +186,7 @@ bool Preferences::getBool(const char* key, bool defValue)
 
 size_t Preferences::putBool(const char* key, bool value)
 {
-    return putValue(key, (false == value) ? "0" : "1");
+    return putValue(key, (false == value) ? "0" : "1", sizeof(uint8_t));
 }
 
 int32_t Preferences::getInt(const char* key, int32_t defValue)
@@ -204,7 +204,7 @@ int32_t Preferences::getInt(const char* key, int32_t defValue)
 
 size_t Preferences::putInt(const char* key, int32_t value)
 {
-    return putValue(key, std::to_string(value));
+    return putValue(key, std::to_string(value), sizeof(value));
 }
 
 uint32_t Preferences::getUInt(const char* key, uint32_t defValue)
@@ -222,7 +222,7 @@ uint32_t Preferences::getUInt(const char* key, uint32_t defValue)
 
 size_t Preferences::putUInt(const char* key, uint32_t value)
 {
-    return putValue(key, std::to_string(value));
+    return putValue(key, std::to_string(value), sizeof(value));
 }
 
 uint8_t Preferences::getUChar(const char* key, uint8_t defValue)
@@ -232,7 +232,7 @@ uint8_t Preferences::getUChar(const char* key, uint8_t defValue)
 
 size_t Preferences::putUChar(const char* key, uint8_t value)
 {
-    return putUInt(key, value);
+    return putValue(key, std::to_string(static_cast<unsigned int>(value)), sizeof(value));
 }
 
 String Preferences::getString(const char* key, const String& defValue)
@@ -250,7 +250,7 @@ String Preferences::getString(const char* key, const String& defValue)
 
 size_t Preferences::putString(const char* key, const String& value)
 {
-    return putValue(key, value.c_str());
+    return putValue(key, value.c_str(), value.length());
 }
 
 /******************************************************************************
@@ -297,7 +297,7 @@ bool Preferences::getValue(const char* key, std::string& value) const
     return isFound;
 }
 
-size_t Preferences::putValue(const char* key, const std::string& value)
+size_t Preferences::putValue(const char* key, const std::string& value, size_t storedSize)
 {
     size_t stored = 0U;
 
@@ -312,7 +312,7 @@ size_t Preferences::putValue(const char* key, const std::string& value)
     else
     {
         getStorage()[m_namespace][key] = value;
-        stored                         = value.length();
+        stored                         = storedSize;
 
         saveStorage();
     }

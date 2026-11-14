@@ -256,6 +256,10 @@ static void testDirectory(void)
     TEST_ASSERT_TRUE(gFs.mkdir("/sub"));
     TEST_ASSERT_FALSE(gFs.mkdir("/sub"));
 
+    /* exists() is true for a directory too, independent of the host. */
+    TEST_ASSERT_TRUE(gFs.exists("/sub"));
+    TEST_ASSERT_TRUE(gFs.exists(String("/sub")));
+
     writeFile("/sub/c.txt", "abc");
 
     File dir = gFs.open("/sub");
@@ -288,6 +292,7 @@ static void testDirectory(void)
     TEST_ASSERT_FALSE(gFs.rmdir("/sub"));
     TEST_ASSERT_TRUE(gFs.remove("/sub/c.txt"));
     TEST_ASSERT_TRUE(gFs.rmdir("/sub"));
+    TEST_ASSERT_FALSE(gFs.exists("/sub"));
     TEST_ASSERT_FALSE(gFs.open("/sub"));
 }
 

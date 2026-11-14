@@ -194,7 +194,7 @@ fs::File fs::File::openNextFile(const char* mode)
             struct stat info;
 
             if ((0 == stat(fullPath.c_str(), &info)) &&
-                (0 != (info.st_mode & S_IFDIR)))
+                (true == S_ISDIR(info.st_mode)))
             {
                 DIR* dir = opendir(fullPath.c_str());
 

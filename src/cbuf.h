@@ -26,10 +26,12 @@
 *******************************************************************************/
 /**
  * @file   cbuf.h
- * @brief  Circular buffer
+ * @brief  FIFO byte buffer
  * @author Andreas Merkle <web@blue-andi.de>
  *
- * Counterpart of the Arduino circular buffer.
+ * Counterpart of the Arduino circular buffer. It is not a ring: the pending
+ * bytes are kept in one contiguous block, which is moved to the beginning of
+ * the buffer when the space of already read bytes is reused.
  *
  * @addtogroup Arduino
  *
@@ -60,14 +62,14 @@
  *****************************************************************************/
 
 /**
- * Circular buffer.
+ * FIFO byte buffer with a fixed capacity, which can be increased.
  */
 class cbuf
 {
 public:
 
     /**
-     * Constructs the circular buffer.
+     * Constructs the buffer.
      *
      * @param[in] size  Buffer size in byte.
      */
@@ -79,7 +81,7 @@ public:
     }
 
     /**
-     * Destroys the circular buffer.
+     * Destroys the buffer.
      */
     ~cbuf()
     {
@@ -110,13 +112,14 @@ public:
     }
 
     /**
-     * Get the free space of the buffer.
+     * Get the free space of the buffer. This includes the space of bytes,
+     * which were already read.
      *
      * @return Free space in byte
      */
     size_t room() const
     {
-        return m_buffer.size() - m_writeIndex;
+        return m_buffer.size() - available();
     }
 
     /**
@@ -155,6 +158,8 @@ public:
 
         if (nullptr != data)
         {
+            compact();
+
             written = room();
 
             if (size < written)

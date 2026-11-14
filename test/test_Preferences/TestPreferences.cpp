@@ -68,6 +68,9 @@
 /** Temporary directory, relative to the working directory. */
 static const char* TEST_DIR = "tmp_test_preferences";
 
+/** Is the working directory changed into the temporary directory? */
+static bool gIsInTestDir = false;
+
 /** Namespace used by the tests. */
 static const char* NAMESPACE = "test";
 
@@ -110,15 +113,20 @@ static bool changeDirectory(const char* path)
  * Called before every test.
  *
  * The preferences are stored in a file in the working directory, therefore the
- * working directory is changed to a temporary one.
+ * working directory is changed to a temporary one. A leftover of an aborted
+ * run is removed first.
  */
 void setUp(void)
 {
     FS rootFs;
 
     TEST_ASSERT_TRUE(rootFs.begin("."));
+    (void)rootFs.remove(String(TEST_DIR) + "/preferences.txt");
+    (void)rootFs.rmdir(TEST_DIR);
+
     TEST_ASSERT_TRUE(rootFs.mkdir(TEST_DIR));
     TEST_ASSERT_TRUE(changeDirectory(TEST_DIR));
+    gIsInTestDir = true;
 }
 
 /**
@@ -130,23 +138,32 @@ void setUp(void)
  */
 void tearDown(void)
 {
-    FS          rootFs;
-    Preferences pref;
+    FS rootFs;
 
-    if (true == pref.begin(NAMESPACE, false))
+    /* Without the temporary directory nothing was used, and clearing would
+     * write the storage file into the wrong directory.
+     */
+    if (true == gIsInTestDir)
     {
-        (void)pref.clear();
-        pref.end();
+        Preferences pref;
+
+        if (true == pref.begin(NAMESPACE, false))
+        {
+            (void)pref.clear();
+            pref.end();
+        }
+
+        if (true == pref.begin(NAMESPACE_OTHER, false))
+        {
+            (void)pref.clear();
+            pref.end();
+        }
+
+        (void)remove("preferences.txt");
+        (void)changeDirectory("..");
+        gIsInTestDir = false;
     }
 
-    if (true == pref.begin(NAMESPACE_OTHER, false))
-    {
-        (void)pref.clear();
-        pref.end();
-    }
-
-    (void)remove("preferences.txt");
-    (void)changeDirectory("..");
     (void)rootFs.begin(".");
     (void)rootFs.rmdir(TEST_DIR);
 }
@@ -160,10 +177,13 @@ static void testPutGet(void)
 
     TEST_ASSERT_TRUE(pref.begin(NAMESPACE));
 
+    /* Like the ESP32 the stored size is returned: the size of the type and
+     * not the length of its text representation.
+     */
     TEST_ASSERT_EQUAL_UINT32(1U, pref.putBool("bool", true));
-    TEST_ASSERT_EQUAL_UINT32(3U, pref.putInt("int", -42));
-    TEST_ASSERT_EQUAL_UINT32(10U, pref.putUInt("uint", 4000000000U));
-    TEST_ASSERT_EQUAL_UINT32(3U, pref.putUChar("uchar", 255U));
+    TEST_ASSERT_EQUAL_UINT32(4U, pref.putInt("int", -42));
+    TEST_ASSERT_EQUAL_UINT32(4U, pref.putUInt("uint", 4000000000U));
+    TEST_ASSERT_EQUAL_UINT32(1U, pref.putUChar("uchar", 255U));
     TEST_ASSERT_EQUAL_UINT32(5U, pref.putString("string", "Hello"));
 
     TEST_ASSERT_TRUE(pref.getBool("bool", false));

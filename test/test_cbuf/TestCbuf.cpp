@@ -116,9 +116,9 @@ static void testWriteOverflow(void)
 }
 
 /**
- * Test reading in order after the buffer wrapped.
+ * Test reading in order after a partial read and after the buffer was drained.
  */
-static void testReadAfterWrap(void)
+static void testReadInOrderAfterDrain(void)
 {
     cbuf buffer(4U);
     char data[8U] = { 0 };
@@ -138,6 +138,33 @@ static void testReadAfterWrap(void)
     TEST_ASSERT_EQUAL_UINT(4U, buffer.read(data, sizeof(data)));
     TEST_ASSERT_EQUAL_STRING("efgh", data);
     TEST_ASSERT_EQUAL_UINT(0U, buffer.read(data, sizeof(data)));
+}
+
+/**
+ * Test that the space of already read bytes is reused by write().
+ */
+static void testWriteReusesReadSpace(void)
+{
+    cbuf buffer(4U);
+    char data[8U] = { 0 };
+
+    TEST_ASSERT_EQUAL_UINT(4U, buffer.write("abcd", 4U));
+    TEST_ASSERT_EQUAL_UINT(0U, buffer.room());
+
+    TEST_ASSERT_EQUAL_UINT(2U, buffer.read(data, 2U));
+    TEST_ASSERT_EQUAL_MEMORY("ab", data, 2U);
+    TEST_ASSERT_EQUAL_UINT(2U, buffer.available());
+    TEST_ASSERT_EQUAL_UINT(2U, buffer.room());
+
+    TEST_ASSERT_EQUAL_UINT(2U, buffer.write("ef", 2U));
+    TEST_ASSERT_EQUAL_UINT(4U, buffer.available());
+    TEST_ASSERT_EQUAL_UINT(0U, buffer.room());
+    TEST_ASSERT_EQUAL_UINT(0U, buffer.write("g", 1U));
+
+    memset(data, 0, sizeof(data));
+    TEST_ASSERT_EQUAL_UINT(4U, buffer.read(data, sizeof(data)));
+    TEST_ASSERT_EQUAL_STRING("cdef", data);
+    TEST_ASSERT_EQUAL_UINT(4U, buffer.room());
 }
 
 /**
@@ -190,7 +217,8 @@ extern int main(int argc, char** argv)
 
     RUN_TEST(testSize);
     RUN_TEST(testWriteOverflow);
-    RUN_TEST(testReadAfterWrap);
+    RUN_TEST(testReadInOrderAfterDrain);
+    RUN_TEST(testWriteReusesReadSpace);
     RUN_TEST(testResizeAdd);
 
     return UNITY_END();

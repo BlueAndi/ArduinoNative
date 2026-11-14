@@ -94,7 +94,7 @@ enum SeekMode
  * The filesystem on the target knows binary files only. On the host a file
  * which is opened in text mode gets its line endings translated and a 0x1a is
  * interpreted as end of file. That would corrupt every file which is not pure
- * text, e.g. the images served by the webserver. The webserver opens its files
+ * text, e.g. the images served by the web server. The web server opens its files
  * with "r", therefore the mode is adapted here and not at the caller.
  *
  * @param[in] mode  File open mode, like the C library uses it. May be nullptr.
@@ -384,7 +384,7 @@ public:
 private:
 
     /* The handle is shared, because a File is copied around by value, e.g. by
-     * the webserver. Every copy would close the handle on its own, which is a
+     * the web server. Every copy would close the handle on its own, which is a
      * double free. The Arduino counterpart shares it the same way.
      */
     std::shared_ptr<FILE> m_fd;  /**< File handle, nullptr in case of a directory. */
@@ -484,7 +484,7 @@ public:
             /* Guard: invalid root path. */
         }
         else if ((0 != stat(rootPath, &info)) ||
-                 (0 == (info.st_mode & S_IFDIR)))
+                 (false == S_ISDIR(info.st_mode)))
         {
             /* Guard: root path doesn't exist or is not a directory. */
         }
@@ -520,7 +520,7 @@ public:
         File        file;
 
         if ((0 == stat(fullPath.c_str(), &info)) &&
-            (0 != (info.st_mode & S_IFDIR)))
+            (true == S_ISDIR(info.st_mode)))
         {
             DIR* dir = opendir(fullPath.c_str());
 
@@ -554,7 +554,7 @@ public:
     }
 
     /**
-     * Does the file exist?
+     * Does the file or directory exist?
      *
      * @param[in] path  Path, like the target uses it
      *
@@ -563,20 +563,13 @@ public:
     bool exists(const char* path)
     {
         std::string fullPath = buildPath(path);
-        bool        itExists = false;
-        FILE*       fd       = fopen(fullPath.c_str(), "rb");
+        struct stat info;
 
-        if (nullptr != fd)
-        {
-            itExists = true;
-            fclose(fd);
-        }
-
-        return itExists;
+        return (0 == stat(fullPath.c_str(), &info));
     }
 
     /**
-     * Does the file exist?
+     * Does the file or directory exist?
      *
      * @param[in] path  Path, like the target uses it
      *
