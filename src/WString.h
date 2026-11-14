@@ -760,7 +760,8 @@ public:
     {
         unsigned char result = 0U;
 
-        if ((offset + s2.length()) <= m_stdStr.length())
+        /* Written as subtraction, because the sum of offset and length may wrap around. */
+        if ((offset <= m_stdStr.length()) && (s2.m_stdStr.length() <= (m_stdStr.length() - offset)))
         {
             if (0 == m_stdStr.compare(offset, s2.m_stdStr.length(), s2.m_stdStr))
             {
@@ -1127,7 +1128,7 @@ public:
     }
 
     /**
-     * Replace every occurence of the given character.
+     * Replace every occurrence of the given character.
      *
      * @param[in] find          Character to search for.
      * @param[in] replacement   Character which replaces it.
@@ -1138,7 +1139,7 @@ public:
     }
 
     /**
-     * Replace every occurence of the given string.
+     * Replace every occurrence of the given string.
      *
      * @param[in] find          String to search for.
      * @param[in] replacement   String which replaces it.
@@ -1477,4 +1478,4 @@ private:
 
 #endif /* WSTRING_H */
 
-/** @} */
+/** @} */

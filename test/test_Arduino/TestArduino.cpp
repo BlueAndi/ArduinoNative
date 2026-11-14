@@ -64,6 +64,9 @@ static void          fakeDelay(unsigned long ms);
  * Local Variables
  *****************************************************************************/
 
+/** Tick of the fake time base. The real clock cannot deliver it, because it would take almost 50 days. */
+static const unsigned long FAKE_TICK = 0xFFFFFFF0UL;
+
 /** Last delay time, which was requested via the injected delay function. */
 static unsigned long gLastDelay = 0UL;
 
@@ -134,7 +137,12 @@ static void testChronoTimeBase(void)
     delay(20U);
 
     TEST_ASSERT_GREATER_OR_EQUAL_UINT32(20U, millis() - start);
-    TEST_ASSERT_GREATER_OR_EQUAL_UINT32(millis() * 1000UL - 1000UL, micros());
+
+    /* The order of the reads matters: micros() is read after millis(). */
+    unsigned long ms = millis();
+    unsigned long us = micros();
+
+    TEST_ASSERT_TRUE(us >= (ms * 1000UL));
 
     yield();
 }
@@ -211,25 +219,25 @@ static void testInjectedTimeBase(void)
 
     Arduino::setup(fakeTick, fakeDelay);
 
-    TEST_ASSERT_EQUAL_UINT32(1234U, millis());
-    TEST_ASSERT_EQUAL_UINT32(1234000U, micros());
+    TEST_ASSERT_EQUAL_UINT32(FAKE_TICK, millis());
+    TEST_ASSERT_EQUAL_UINT32(FAKE_TICK * 1000UL, micros());
 
     delay(42UL);
     TEST_ASSERT_EQUAL_UINT32(42U, gLastDelay);
 
     /* nullptr selects the default again. */
     Arduino::setup(nullptr, nullptr);
-    TEST_ASSERT_NOT_EQUAL_UINT32(1234U, millis());
+    TEST_ASSERT_TRUE(FAKE_TICK != millis());
 }
 
 /**
  * Fake system tick.
  *
- * @return Always 1234.
+ * @return Always FAKE_TICK.
  */
 static unsigned long fakeTick(void)
 {
-    return 1234UL;
+    return FAKE_TICK;
 }
 
 /**

@@ -59,6 +59,8 @@ extern void setup();
 /** Application loop, provided by the application. */
 extern void loop();
 
+static std::chrono::steady_clock::time_point getTimerStartTime();
+
 /******************************************************************************
  * Local Variables
  *****************************************************************************/
@@ -77,9 +79,6 @@ static uint8_t       gPinModes[MAX_PINS]  = { 0U };
 
 /** Level of every pin. There is no GPIO on the host, its just remembered. */
 static uint8_t       gPinLevels[MAX_PINS] = { 0U };
-
-/** Start time for timing functions. */
-static const auto    gTimerStartTime    = std::chrono::steady_clock::now();
 
 /******************************************************************************
  * Public Methods
@@ -122,7 +121,8 @@ extern unsigned long millis()
     {
         using namespace std::chrono;
 
-        timestamp = static_cast<unsigned long>(duration_cast<milliseconds>(steady_clock::now() - gTimerStartTime).count());
+        timestamp =
+            static_cast<unsigned long>(duration_cast<milliseconds>(steady_clock::now() - getTimerStartTime()).count());
     }
 
     return timestamp;
@@ -140,7 +140,8 @@ extern unsigned long micros()
     {
         using namespace std::chrono;
 
-        timestamp = static_cast<unsigned long>(duration_cast<microseconds>(steady_clock::now() - gTimerStartTime).count());
+        timestamp =
+            static_cast<unsigned long>(duration_cast<microseconds>(steady_clock::now() - getTimerStartTime()).count());
     }
 
     return timestamp;
@@ -154,7 +155,15 @@ extern void delay(unsigned long ms)
     }
     else
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+        /* sleep_for() may return a little early on some hosts, therefore wait until
+         * the deadline of the steady clock is really reached.
+         */
+        const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(ms);
+
+        while (std::chrono::steady_clock::now() < deadline)
+        {
+            std::this_thread::sleep_for(deadline - std::chrono::steady_clock::now());
+        }
     }
 }
 
@@ -224,3 +233,20 @@ extern void randomSeed(unsigned long seed)
 /******************************************************************************
  * Local Functions
  *****************************************************************************/
+
+/**
+ * Get the start time for the timing functions.
+ *
+ * The time is taken at the first call. It is a function local static on
+ * purpose: millis() may be called during the static initialization of another
+ * translation unit, which is not ordered against a namespace scope variable of
+ * this file.
+ *
+ * @return Start time
+ */
+static std::chrono::steady_clock::time_point getTimerStartTime()
+{
+    static const std::chrono::steady_clock::time_point START_TIME = std::chrono::steady_clock::now();
+
+    return START_TIME;
+}

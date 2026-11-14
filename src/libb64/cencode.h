@@ -76,7 +76,7 @@ typedef struct
 {
     base64_encodestep step;      /**< Current step. */
     char              result;    /**< Bits which are kept for the next step. */
-    int               stepcount; /**< Number of encoded characters, used for line breaks. */
+    int               stepcount; /**< Number of completed 3 byte groups. No line breaks are inserted. */
 
 } base64_encodestate;
 

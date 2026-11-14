@@ -29,7 +29,7 @@
  * @brief  Test the String of the Arduino implementation for the native environment.
  * @author Andreas Merkle <web@blue-andi.de>
  *
- * The String is used by the whole application and by the webserver. A deviation
+ * The String is used by the whole application and by the web server. A deviation
  * from the Arduino behaviour is not visible at compile time, but breaks the
  * application at runtime. Therefore the behaviour is pinned down here.
  */
@@ -230,7 +230,7 @@ static void testNumberConstruction()
 
 /**
  * Test the concatenation. A number must be appended as number and not as
- * single character, otherwise e.g. the HTTP status line of the webserver
+ * single character, otherwise e.g. the HTTP status line of the web server
  * gets corrupted.
  */
 static void testConcat()
@@ -326,7 +326,7 @@ static void testStartsWith()
     TEST_ASSERT_TRUE(0U != str.startsWith(String("/")));
     TEST_ASSERT_TRUE(0U != str.startsWith(String("")));
 
-    /* The webserver derives the routing from this, a false positive would
+    /* The web server derives the routing from this, a false positive would
      * redirect every request.
      */
     TEST_ASSERT_TRUE(0U == str.startsWith(String("//")));
@@ -340,6 +340,15 @@ static void testStartsWith()
     TEST_ASSERT_TRUE(0U != str.startsWith(String("style.css"), 7U));
     TEST_ASSERT_TRUE(0U == str.startsWith(String("style"), 2U));
     TEST_ASSERT_TRUE(0U == str.startsWith(String("css"), 100U));
+
+    /* An offset at the end only matches the empty pattern, behind the end nothing matches. */
+    TEST_ASSERT_TRUE(0U != str.startsWith(String(""), 16U));
+    TEST_ASSERT_TRUE(0U == str.startsWith(String("x"), 16U));
+    TEST_ASSERT_TRUE(0U == str.startsWith(String(""), 17U));
+
+    /* Offset plus pattern length must not wrap around. */
+    TEST_ASSERT_TRUE(0U == str.startsWith(String("style"), 0xFFFFFFFFU));
+    TEST_ASSERT_TRUE(0U == str.startsWith(String(""), 0xFFFFFFFFU));
 }
 
 /**
@@ -374,7 +383,7 @@ static void testIndexOf()
 
 /**
  * Test the backward search. The whole pattern must be searched for and not
- * any of its characters, otherwise the webserver treats every route as a
+ * any of its characters, otherwise the web server treats every route as a
  * wildcard route.
  */
 static void testLastIndexOf()

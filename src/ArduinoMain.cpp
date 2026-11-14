@@ -40,6 +40,8 @@
  *
  * The application works inside the directory given by the --work-dir option.
  * Without the option it works inside the current directory.
+ *
+ * The compile switch ARDUINO_NATIVE_NO_MAIN removes the main().
  */
 
 /******************************************************************************
@@ -59,6 +61,11 @@
 /******************************************************************************
  * Compiler Switches
  *****************************************************************************/
+
+/* Define ARDUINO_NATIVE_NO_MAIN to build this file without the main(), e.g. if
+ * the application brings its own one and the library is not used as archive.
+ */
+#ifndef ARDUINO_NATIVE_NO_MAIN
 
 /******************************************************************************
  * Macros
@@ -157,7 +164,7 @@ static const char* getWorkDir(int argc, char** argv)
     /* The option needs a value, therefore the last argument is never the option. */
     while ((nullptr == workDir) && ((argc - 1) > index))
     {
-        if (0 == strcmp(argv[index], WORK_DIR_OPTION))
+        if ((nullptr != argv[index]) && (0 == strcmp(argv[index], WORK_DIR_OPTION)))
         {
             workDir = argv[index + 1];
         }
@@ -192,3 +199,5 @@ static bool changeWorkDir(const char* workDir)
 
     return (0 == result);
 }
+
+#endif /* ARDUINO_NATIVE_NO_MAIN */
