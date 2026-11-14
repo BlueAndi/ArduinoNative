@@ -174,6 +174,70 @@ String IPAddress::toString() const
     return result;
 }
 
+bool IPAddress::fromString(const char* address)
+{
+    bool isValid = false;
+
+    if (nullptr != address)
+    {
+        const uint16_t OCTET_MAX           = 255U;
+        uint8_t        octets[OCTET_COUNT] = {0U, 0U, 0U, 0U};
+        uint16_t       value               = 0U;
+        int            octetIndex          = 0;
+        bool           hasDigit            = false;
+        const char*    current             = address;
+
+        isValid = true;
+
+        while ((true == isValid) && ('\0' != *current))
+        {
+            if (('0' <= *current) && ('9' >= *current))
+            {
+                value    = static_cast<uint16_t>((value * 10U) + static_cast<uint16_t>(*current - '0'));
+                hasDigit = true;
+
+                /* Checked for every digit, which keeps the value far away from an overflow. */
+                if (OCTET_MAX < value)
+                {
+                    isValid = false;
+                }
+            }
+            else if (('.' == *current) && (true == hasDigit) && ((OCTET_COUNT - 1) > octetIndex))
+            {
+                octets[octetIndex] = static_cast<uint8_t>(value);
+                ++octetIndex;
+                value    = 0U;
+                hasDigit = false;
+            }
+            else
+            {
+                isValid = false;
+            }
+
+            ++current;
+        }
+
+        /* The last octet has no dot behind and all octets must be there. */
+        if ((true == isValid) && (true == hasDigit) && ((OCTET_COUNT - 1) == octetIndex))
+        {
+            int index = 0;
+
+            octets[octetIndex] = static_cast<uint8_t>(value);
+
+            for (index = 0; index < OCTET_COUNT; ++index)
+            {
+                m_octets[index] = octets[index];
+            }
+        }
+        else
+        {
+            isValid = false;
+        }
+    }
+
+    return isValid;
+}
+
 /******************************************************************************
  * Protected Methods
  *****************************************************************************/

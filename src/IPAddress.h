@@ -155,6 +155,31 @@ public:
      */
     String toString() const;
 
+    /**
+     * Set the IP address from the dotted decimal notation, e.g. "192.168.1.2".
+     *
+     * Exactly four decimal octets in the range [0; 255] separated by a dot are
+     * accepted, nothing else, no whitespace either. If the string is invalid,
+     * the IP address stays unchanged.
+     *
+     * @param[in] address   IP address in dotted decimal notation.
+     *
+     * @return If the string is a valid IP address, it will return true otherwise false.
+     */
+    bool fromString(const char* address);
+
+    /**
+     * Set the IP address from the dotted decimal notation, e.g. "192.168.1.2".
+     *
+     * @param[in] address   IP address in dotted decimal notation.
+     *
+     * @return If the string is a valid IP address, it will return true otherwise false.
+     */
+    bool fromString(const String& address)
+    {
+        return fromString(address.c_str());
+    }
+
 private:
     uint8_t m_octets[4U]; /**< The single octets of the IP address. */
 };

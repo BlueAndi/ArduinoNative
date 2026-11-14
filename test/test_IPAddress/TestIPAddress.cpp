@@ -239,6 +239,46 @@ static void testCompareAndCopy(void)
 }
 
 /**
+ * Test the conversion from the dotted decimal notation.
+ */
+static void testFromString(void)
+{
+    IPAddress   ip;
+    const char* invalid[] = {"",        "1.2.3",     "1.2.3.4.5", "1.2.3.",           ".1.2.3",
+                             "1..2.3",  "256.1.1.1", "1.2.3.4 ",  " 1.2.3.4",         "1.2.3.a",
+                             "1,2,3,4", "-1.2.3.4",  "1.2.3.4.",  "99999999999.1.1.1"};
+    size_t      index     = 0U;
+
+    TEST_ASSERT_TRUE(ip.fromString("192.168.1.2"));
+    TEST_ASSERT_EQUAL_STRING("192.168.1.2", ip.toString().c_str());
+
+    TEST_ASSERT_TRUE(ip.fromString("0.0.0.0"));
+    TEST_ASSERT_EQUAL_UINT32(0U, static_cast<uint32_t>(ip));
+
+    TEST_ASSERT_TRUE(ip.fromString("255.255.255.255"));
+    TEST_ASSERT_EQUAL_UINT32(0xFFFFFFFFU, static_cast<uint32_t>(ip));
+
+    /* Leading zeros are decimal digits, not octal ones. */
+    TEST_ASSERT_TRUE(ip.fromString("010.001.000.009"));
+    TEST_ASSERT_EQUAL_STRING("10.1.0.9", ip.toString().c_str());
+    TEST_ASSERT_TRUE(ip.fromString("0001.2.3.4"));
+    TEST_ASSERT_EQUAL_STRING("1.2.3.4", ip.toString().c_str());
+
+    TEST_ASSERT_TRUE(ip.fromString(String("172.16.254.1")));
+    TEST_ASSERT_EQUAL_STRING("172.16.254.1", ip.toString().c_str());
+
+    /* A invalid string is rejected and the address stays unchanged. */
+    for (index = 0U; index < (sizeof(invalid) / sizeof(invalid[0U])); ++index)
+    {
+        TEST_ASSERT_FALSE_MESSAGE(ip.fromString(invalid[index]), invalid[index]);
+        TEST_ASSERT_EQUAL_STRING("172.16.254.1", ip.toString().c_str());
+    }
+
+    TEST_ASSERT_FALSE(ip.fromString(static_cast<const char*>(nullptr)));
+    TEST_ASSERT_EQUAL_STRING("172.16.254.1", ip.toString().c_str());
+}
+
+/**
  * Test that a class derived from Client can be used.
  */
 static void testClient(void)
@@ -287,6 +327,7 @@ extern int main(int argc, char** argv)
     RUN_TEST(testOctets);
     RUN_TEST(testUint32);
     RUN_TEST(testCompareAndCopy);
+    RUN_TEST(testFromString);
     RUN_TEST(testClient);
 
     return UNITY_END();
