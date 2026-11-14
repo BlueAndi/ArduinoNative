@@ -47,12 +47,12 @@ Not every Arduino interface is available, just the following ones:
 | --------------------- | ---------------------------------------------------------------------------------------------------- |
 | _Arduino.h_           | Time (`millis()`, `micros()`, `delay()`, `yield()`), digital/analog pins, random, PROGMEM helpers, `constrain()`, `PI`. |
 | _WString.h_           | `String`, based on `std::string`.                                                                    |
-| _Print.h_             | `Print` base class with the `print()`/`println()`/`write()` family.                                  |
+| _Print.h_             | `Print` base class with the `print()`/`println()`/`write()` family. Numbers are printed in the base 2 to 16, other bases select decimal. |
 | _Stream.h_            | `Stream` base class for readable and writable streams.                                               |
 | _HardwareSerial.h_    | `HardwareSerial` and the global `Serial`, connected to the standard output and input. `HardwareSerial::setTxTimeoutMs()` is an ESP32 extension. |
 | _IPAddress.h_         | `IPAddress`.                                                                                         |
 | _Client.h_            | `Client`, the abstraction of a network connection to a remote peer.                                  |
-| _cbuf.h_              | Circular buffer.                                                                                     |
+| _cbuf.h_              | `cbuf`, a FIFO byte buffer with a fixed capacity.                                                    |
 | _MD5Builder.h_        | `MD5Builder` to calculate MD5 hashes.                                                                |
 | _libb64/cencode.h_    | Base64 encoder.                                                                                      |
 | _FS.h_                | Filesystem (`FS`, `File`) and the instance `NativeFS`, which maps the filesystem to a directory of the host. |
@@ -77,13 +77,27 @@ Not every Arduino interface is available, just the following ones:
 
     The define is required, otherwise _Arduino.h_ raises an error.
 
+    On Windows include `<windows.h>` or `<winsock2.h>` before _Arduino.h_. Otherwise the macro `INPUT` of _Arduino.h_ collides with the one of the Windows headers.
+
 3. Implement the usual `setup()` and `loop()` functions of your application. There is no need for a `main()`.
 
 ### Entry point
 
 The library provides the `main()`. It calls `setup()` once and `loop()` in an infinite loop, like the Arduino framework does.
 
-If your application brings its own `main()`, it is used instead of the one of the library. In that case it calls `Arduino::setup()` once and `Arduino::loop()` periodically. `Arduino::setup()` calls the `setup()` of the application and takes the time base of `millis()`, `micros()` and `delay()`, for example to run in simulation time:
+If your application brings its own `main()`, it is used instead of the one of the library:
+
+* With the default setting of PlatformIO (`lib_archive = yes`) the library is linked as archive, therefore the `main()` of the application wins automatically.
+* With `lib_archive = no` define `ARDUINO_NATIVE_NO_MAIN`, which removes the `main()` of the library:
+
+    ```text
+    build_flags =
+        -D ARDUINO_NATIVE_NO_MAIN
+    ```
+
+* A unit test has to bring its own `main()`. Otherwise the `main()` of the library runs `setup()` and `loop()` forever.
+
+The own `main()` calls `Arduino::setup()` once and `Arduino::loop()` periodically. `Arduino::setup()` calls the `setup()` of the application and takes the time base of `millis()`, `micros()` and `delay()`, for example to run in simulation time:
 
 ```cpp
 #include <Arduino.h>
@@ -125,7 +139,7 @@ program --work-dir ./run
 
 `Serial` is a `HardwareSerial`. It writes to the standard output and reads from the standard input.
 
-* The input is only served, if the standard input is connected to a terminal, which can be used interactively. In this case `Serial.begin()` switches the terminal to the raw mode (no echo, no line editing), like the serial interface of a microcontroller delivers the characters. `Serial.end()` restores the mode. If the standard input is redirected, e.g. in a CI, `Serial.available()` is always 0.
+* The input is only served, if the standard input is connected to a terminal, which can be used interactively. In this case `Serial.begin()` switches the terminal to the raw mode (no echo, no line editing), like the serial interface of a microcontroller delivers the characters. `Serial.end()` restores the mode. If the standard input is redirected, e.g. in a CI, `Serial.available()` is always 0 (unless redirected with `setStream()`).
 * Define the compile switch `CONFIG_NATIVE_SERIAL_INPUT` as `0` to disable the terminal input and the raw mode, e.g. if it disturbs a debugger or the terminal of an IDE:
 
     ```text
@@ -138,7 +152,8 @@ program --work-dir ./run
 ### Filesystem and preferences
 
 * `NativeFS` maps the paths of the target (e.g. `/configuration/1.json`) to a root directory of the host. `NativeFS.begin()` uses the current working directory, `NativeFS.begin("path")` an existing directory of your choice. `begin()` returns false if the directory doesn't exist.
-* `Preferences` keeps the key/value pairs in the file _preferences.txt_ in the working directory. Every modification is written through, so the values survive a restart.
+* `FS::exists()` is true for files and directories.
+* `Preferences` keeps the key/value pairs in the file _preferences.txt_ in the working directory. Every modification is written through, so the values survive a restart. Like on the ESP32 the `put...()` functions return the stored size: 1 for `putBool()` and `putUChar()`, 4 for `putInt()` and `putUInt()`, the string length for `putString()`, and 0 on failure.
 
 Use `--work-dir` to keep both files together in one directory.
 
@@ -161,7 +176,10 @@ See [minimal example](./examples/example/).
 * `Serial_` and `Terminal` are gone. `Serial` is now a `HardwareSerial` (see _HardwareSerial.h_).
 * `Print` follows the Arduino model. A class derived from `Print` implements `write(uint8_t)` and no longer overrides `print(...)` and `println(...)`, which are provided by `Print`.
 * A class derived from `Stream` implements `available()`, which is no longer `const`, `read()` and `peek()`. `readBytes()` is no longer virtual, it is built on `read()`.
+* `print()` and `println()` return `size_t`, the number of written characters.
 * `Serial.setStream()` takes a pointer instead of a reference.
+* Without `Arduino::setup()` (or with `nullptr`) `millis()` returned 0 and `delay()` did nothing. Now both run on the steady clock and `delay()` really sleeps.
+* _Arduino.h_ defines `INPUT`, `OUTPUT`, `HIGH`, `LOW`, `F`, `PSTR`, `boolean` and more, like the Arduino framework does. Check your code for names which collide with them.
 * The library _MainNative_ of the example is not needed anymore, the library provides the `main()`.
 * `String::length()` returns `unsigned int`.
 
