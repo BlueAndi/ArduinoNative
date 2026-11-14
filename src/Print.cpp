@@ -1,6 +1,6 @@
 /* MIT License
  *
- * Copyright (c) 2023 - 2025 Andreas Merkle <web@blue-andi.de>
+ * Copyright (c) 2023 - 2026 Andreas Merkle <web@blue-andi.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,16 +25,21 @@
     DESCRIPTION
 *******************************************************************************/
 /**
- *  @brief  Implementation of the Terminal/Console Stream
- *  @author Gabryel Reyes <gabryelrdiaz@gmail.com>
+ * @file   Print.cpp
+ * @brief  Print
+ * @author Andreas Merkle <web@blue-andi.de>
  */
 
 /******************************************************************************
  * Includes
  *****************************************************************************/
+#include "Print.h"
 
-#include <stdio.h>
-#include "Terminal.h"
+#include <string.h>
+
+/******************************************************************************
+ * Compiler Switches
+ *****************************************************************************/
 
 /******************************************************************************
  * Macros
@@ -56,117 +61,118 @@
  * Public Methods
  *****************************************************************************/
 
-Terminal::Terminal() : Stream()
+size_t Print::write(const uint8_t* buffer, size_t size)
 {
-}
-
-Terminal::~Terminal()
-{
-}
-
-void Terminal::print(const char str[])
-{
-    printf("%s", str);
-}
-
-void Terminal::print(uint8_t value)
-{
-    printf("%u", value);
-}
-
-void Terminal::print(uint16_t value)
-{
-    printf("%u", value);
-}
-
-void Terminal::print(uint32_t value)
-{
-    printf("%u", value);
-}
-
-void Terminal::print(int8_t value)
-{
-    printf("%d", value);
-}
-
-void Terminal::print(int16_t value)
-{
-    printf("%d", value);
-}
-
-void Terminal::print(int32_t value)
-{
-    printf("%d", value);
-}
-
-void Terminal::println(const char str[])
-{
-    printf("%s\n", str);
-}
-
-void Terminal::println(uint8_t value)
-{
-    printf("%u\n", value);
-}
-
-void Terminal::println(uint16_t value)
-{
-    printf("%u\n", value);
-}
-
-void Terminal::println(uint32_t value)
-{
-    printf("%u\n", value);
-}
-
-void Terminal::println(int8_t value)
-{
-    printf("%d\n", value);
-}
-
-void Terminal::println(int16_t value)
-{
-    printf("%d\n", value);
-}
-
-void Terminal::println(int32_t value)
-{
-    printf("%d\n", value);
-}
-
-size_t Terminal::write(const uint8_t* buffer, size_t length)
-{
-    size_t count = 0;
-
-    if ((nullptr != buffer) && (0U != length))
+    size_t n = 0;
+    while (size--)
     {
-        for (count = 0; count < length; count++)
-        {
-            printf("%u", buffer[count]);
-        }
+        n += write(*buffer++);
+    }
+    return n;
+}
+
+size_t Print::write(const char* str)
+{
+    if (str == nullptr)
+    {
+        return 0;
     }
 
-    return count;
+    return write(reinterpret_cast<const uint8_t*>(str), strlen(str));
 }
 
-int Terminal::available() const
+size_t Print::write(const char* buffer, size_t size)
 {
-    /* Not implemented*/
-    return 0;
+    return write(reinterpret_cast<const uint8_t*>(buffer), size);
 }
 
-size_t Terminal::readBytes(uint8_t* buffer, size_t length)
+size_t Print::print(const String& s)
 {
-    /* Not implemented*/
-    (void) buffer;
-    (void) length;
-    return 0;
+    return write(s.c_str(), s.length());
 }
+
+size_t Print::print(const char str[])
+{
+    return write(str);
+}
+
+size_t Print::print(char c)
+{
+    return write(c);
+}
+
+size_t Print::print(long n, int base)
+{
+    if (base == 0)
+    {
+        return write(n);
+    }
+    else if (base == 10)
+    {
+        if (n < 0)
+        {
+            size_t t = print('-');
+
+            /* Negate in the unsigned domain, which is well defined for LONG_MIN. */
+            return printNumber(0UL - static_cast<unsigned long>(n), 10) + t;
+        }
+        return printNumber(static_cast<unsigned long>(n), 10);
+    }
+    else
+    {
+        return printNumber(static_cast<unsigned long>(n), static_cast<uint8_t>(base));
+    }
+}
+
+size_t Print::println()
+{
+    return print("\r\n");
+}
+
+size_t Print::println(const String& s)
+{
+    size_t n  = print(s);
+    n        += println();
+    return n;
+}
+
+/******************************************************************************
+ * Protected Methods
+ *****************************************************************************/
 
 /******************************************************************************
  * Private Methods
  *****************************************************************************/
 
+size_t Print::printNumber(unsigned long n, uint8_t base)
+{
+    char  buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
+    char* str = &buf[sizeof(buf) - 1];
+
+    *str      = '\0';
+
+    // prevent crash if called with base == 1
+    if (base < 2)
+    {
+        base = 10;
+    }
+
+    do
+    {
+        unsigned long m  = n;
+        n               /= base;
+        char c           = m - base * n;
+        *--str           = c < 10 ? c + '0' : c + 'A' - 10;
+    }
+    while (n);
+
+    return write(str);
+}
+
+/******************************************************************************
+ * External Functions
+ *****************************************************************************/
+
 /******************************************************************************
  * Local Functions
- *****************************************************************************/
+ *****************************************************************************/

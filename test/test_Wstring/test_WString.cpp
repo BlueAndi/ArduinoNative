@@ -75,6 +75,16 @@ static void testWStringConcat(void);
  * External Functions
  *****************************************************************************/
 
+/** Application setup, required by the library. */
+void setup()
+{
+}
+
+/** Application loop, required by the library. */
+void loop()
+{
+}
+
 /**
  * Main entry point
  *
