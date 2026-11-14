@@ -119,6 +119,8 @@ public:
      */
     void setStream(Stream* stream);
 
+    using Print::write;
+
     /**
      * Write a single byte to the standard output.
      *

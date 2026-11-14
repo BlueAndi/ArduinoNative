@@ -157,7 +157,8 @@ extern void setUp(void)
  */
 extern void tearDown(void)
 {
-    /* Not used. */
+    /* Never leave a redirect behind, independent of the test order. */
+    Serial.setStream(nullptr);
 }
 
 /******************************************************************************
@@ -188,6 +189,10 @@ static void testRedirect(void)
     TEST_ASSERT_EQUAL_INT('x', Serial.peek());
     TEST_ASSERT_EQUAL_INT('x', Serial.read());
     TEST_ASSERT_EQUAL_INT(-1, Serial.read());
+
+    TEST_ASSERT_EQUAL_UINT(2U, Serial.write("yz"));
+    TEST_ASSERT_EQUAL_INT('y', Serial.read());
+    TEST_ASSERT_EQUAL_INT('z', Serial.read());
 
     Serial.setStream(nullptr);
 
