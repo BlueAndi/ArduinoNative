@@ -80,6 +80,7 @@ static const char BASE64_PADDING    = '=';
  * External Functions
  *****************************************************************************/
 
+/** Initialize the encoder state, see cencode.h. */
 extern "C" void base64_init_encodestate(base64_encodestate* state)
 {
     if (nullptr != state)
@@ -90,6 +91,7 @@ extern "C" void base64_init_encodestate(base64_encodestate* state)
     }
 }
 
+/** Encode a 6-bit value to a base64 character, see cencode.h. */
 extern "C" char base64_encode_value(char value)
 {
     char result = BASE64_PADDING;
@@ -103,6 +105,7 @@ extern "C" char base64_encode_value(char value)
     return result;
 }
 
+/** Encode a block of data, see cencode.h. */
 extern "C" int base64_encode_block(const char* plaintext_in, int length_in, char* code_out, base64_encodestate* state_in)
 {
     int count = 0;
@@ -176,6 +179,7 @@ extern "C" int base64_encode_block(const char* plaintext_in, int length_in, char
     return count;
 }
 
+/** Finish the encoding and write the padding, see cencode.h. */
 extern "C" int base64_encode_blockend(char* code_out, base64_encodestate* state_in)
 {
     int count = 0;
@@ -216,6 +220,7 @@ extern "C" int base64_encode_blockend(char* code_out, base64_encodestate* state_
     return count;
 }
 
+/** Encode a complete buffer in one step, see cencode.h. */
 extern "C" int base64_encode_chars(const char* plaintext_in, int length_in, char* code_out)
 {
     base64_encodestate state;

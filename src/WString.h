@@ -44,6 +44,7 @@
  *****************************************************************************/
 
 #ifndef ARDUINOJSON_ENABLE_ARDUINO_STRING
+/** Enable the Arduino String support of ArduinoJson. */
 #define ARDUINOJSON_ENABLE_ARDUINO_STRING 1
 #endif
 
@@ -338,6 +339,13 @@ public:
         return *this;
     }
 
+    /**
+     * Append a string.
+     *
+     * @param[in] other  String to append
+     *
+     * @return This string
+     */
     String& operator+=(const String& other)
     {
         m_stdStr += other.m_stdStr;
@@ -345,6 +353,13 @@ public:
         return *this;
     }
 
+    /**
+     * Append a character.
+     *
+     * @param[in] c  Character to append
+     *
+     * @return This string
+     */
     String& operator+=(char c)
     {
         m_stdStr += c;
@@ -352,6 +367,13 @@ public:
         return *this;
     }
 
+    /**
+     * Append a number as text.
+     *
+     * @param[in] number  Number to append
+     *
+     * @return This string
+     */
     String& operator+=(int number)
     {
         m_stdStr += std::to_string(number);
@@ -457,6 +479,13 @@ public:
         return *this;
     }
 
+    /**
+     * Concatenate two strings.
+     *
+     * @param[in] other  String to append
+     *
+     * @return The concatenated string
+     */
     String operator+(const String& other) const
     {
         String tmp = *this;

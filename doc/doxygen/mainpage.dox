@@ -1,5 +1,12 @@
 @mainpage Manual
 
+ArduinoNative provides some of the Arduino interfaces for the native environment, so an Arduino based application can run on the host, e.g. in a simulation.
+
+- Entry point: The library provides the main() which calls setup() once and loop() periodically. It supports the command line option --work-dir. An application can bring its own main() and use Arduino::setup() and Arduino::loop() to inject its own time base.
+- Serial: The global Serial is a HardwareSerial, connected to the standard output and input. See ConsoleCompat for the terminal handling.
+- Storage: FS uses the working directory as root by default, Preferences keeps its data in the working directory.
+- Host support: HostCompat.h provides C library functions which are missing on Windows.
+
 @defgroup Arduino Arduino
 Arduino for native environment.
 @{

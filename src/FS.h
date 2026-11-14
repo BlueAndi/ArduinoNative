@@ -63,8 +63,11 @@
  * Macros
  *****************************************************************************/
 
+/** File open mode: read, always binary. */
 #define FILE_READ "rb"
+/** File open mode: write (truncate), always binary. */
 #define FILE_WRITE "wb"
+/** File open mode: append, always binary. */
 #define FILE_APPEND "ab"
 
 /******************************************************************************
@@ -77,6 +80,7 @@
 namespace fs
 {
 
+/** Seek mode, like the Arduino filesystem defines it. */
 enum SeekMode
 {
     SeekSet = 0,
@@ -99,10 +103,19 @@ enum SeekMode
  */
 std::string toBinaryMode(const char* mode);
 
+/**
+ * A file or directory of the native filesystem.
+ * It is cheap to copy, because the copies share the file handle.
+ */
 class File
 {
 public:
 
+    /**
+     * Constructs a file from the given file handle.
+     *
+     * @param[in] fd  File handle or nullptr for an invalid file.
+     */
     File(FILE* fd = nullptr) :
         m_fd(fd, fileDeleter),
         m_dir(nullptr, dirDeleter),
@@ -143,10 +156,35 @@ public:
     {
     }
 
+    /**
+     * Write a single byte.
+     *
+     * @param[in] data  Data byte
+     *
+     * @return Number of written bytes.
+     */
     size_t write(uint8_t data);
+    /**
+     * Write several bytes.
+     *
+     * @param[in] buf   Data buffer
+     * @param[in] size  Data buffer size in byte
+     *
+     * @return Number of written bytes.
+     */
     size_t write(const uint8_t* buf, size_t size);
+    /**
+     * Get the number of bytes which are available to read.
+     *
+     * @return Number of available bytes.
+     */
     int    available();
 
+    /**
+     * Read a single byte.
+     *
+     * @return Data byte or -1 if nothing is available.
+     */
     int    read()
     {
         int data = -1;
@@ -164,9 +202,23 @@ public:
         return data;
     }
 
+    /**
+     * Get the next byte without removing it.
+     *
+     * @return Data byte or -1 if nothing is available.
+     */
     int    peek();
+    /** Write buffered data out. */
     void   flush();
 
+    /**
+     * Read several bytes.
+     *
+     * @param[out] buf   Data buffer
+     * @param[in]  size  Number of bytes to read
+     *
+     * @return Number of read bytes.
+     */
     size_t read(uint8_t* buf, size_t size)
     {
         size_t readBytesCount = 0U;
@@ -180,11 +232,27 @@ public:
         return readBytesCount;
     }
 
+    /**
+     * Read several bytes.
+     *
+     * @param[out] buffer  Data buffer
+     * @param[in]  length  Number of bytes to read
+     *
+     * @return Number of read bytes.
+     */
     size_t readBytes(char* buffer, size_t length)
     {
         return read(reinterpret_cast<uint8_t*>(buffer), length);
     }
 
+    /**
+     * Set the file position.
+     *
+     * @param[in] pos   Position offset
+     * @param[in] mode  Seek mode
+     *
+     * @return If successful set, it will return true otherwise false.
+     */
     bool seek(uint32_t pos, SeekMode mode)
     {
         bool isSuccessful = false;
@@ -197,11 +265,23 @@ public:
         return isSuccessful;
     }
 
+    /**
+     * Set the file position, counted from the file start.
+     *
+     * @param[in] pos  Position in byte
+     *
+     * @return If successful set, it will return true otherwise false.
+     */
     bool seek(uint32_t pos)
     {
         return seek(pos, SeekSet);
     }
 
+    /**
+     * Get the current file position.
+     *
+     * @return Position in byte
+     */
     size_t position() const
     {
         size_t currPos = 0U;
@@ -220,19 +300,35 @@ public:
         return currPos;
     }
 
+    /**
+     * Get the file size.
+     *
+     * @return Size in byte
+     */
     size_t size() const;
 
+    /** Close the file resp. directory. */
     void   close()
     {
         m_fd.reset();
         m_dir.reset();
     }
 
+    /**
+     * Is the file resp. directory valid?
+     *
+     * @return If valid, it will return true otherwise false.
+     */
     operator bool() const
     {
         return (nullptr != m_fd) || (nullptr != m_dir);
     }
 
+    /**
+     * Get the time of the last write access.
+     *
+     * @return Timestamp in seconds since the epoch.
+     */
     time_t getLastWrite();
 
     /**
@@ -348,6 +444,10 @@ private:
     }
 };
 
+/**
+ * Filesystem of the native environment.
+ * It maps the absolute paths of the target to a directory of the host.
+ */
 class FS
 {
 public:
@@ -405,6 +505,14 @@ public:
         m_rootPath = ".";
     }
 
+    /**
+     * Open a file or directory.
+     *
+     * @param[in] path  Path, like the target uses it
+     * @param[in] mode  File open mode
+     *
+     * @return The file. If it can not be opened, it will be invalid.
+     */
     File open(const char* path, const char* mode = FILE_READ)
     {
         std::string fullPath = buildPath(path);
@@ -432,11 +540,26 @@ public:
         return file;
     }
 
+    /**
+     * Open a file or directory.
+     *
+     * @param[in] path  Path, like the target uses it
+     * @param[in] mode  File open mode
+     *
+     * @return The file. If it can not be opened, it will be invalid.
+     */
     File open(const String& path, const char* mode = FILE_READ)
     {
         return open(path.c_str(), mode);
     }
 
+    /**
+     * Does the file exist?
+     *
+     * @param[in] path  Path, like the target uses it
+     *
+     * @return If it exists, it will return true otherwise false.
+     */
     bool exists(const char* path)
     {
         std::string fullPath = buildPath(path);
@@ -452,11 +575,25 @@ public:
         return itExists;
     }
 
+    /**
+     * Does the file exist?
+     *
+     * @param[in] path  Path, like the target uses it
+     *
+     * @return If it exists, it will return true otherwise false.
+     */
     bool exists(const String& path)
     {
         return exists(path.c_str());
     }
 
+    /**
+     * Remove a file.
+     *
+     * @param[in] path  Path, like the target uses it
+     *
+     * @return If successful removed, it will return true otherwise false.
+     */
     bool remove(const char* path)
     {
         std::string fullPath = buildPath(path);
@@ -464,11 +601,26 @@ public:
         return (0 == std::remove(fullPath.c_str()));
     }
 
+    /**
+     * Remove a file.
+     *
+     * @param[in] path  Path, like the target uses it
+     *
+     * @return If successful removed, it will return true otherwise false.
+     */
     bool remove(const String& path)
     {
         return remove(path.c_str());
     }
 
+    /**
+     * Rename a file resp. directory.
+     *
+     * @param[in] pathFrom  Current path
+     * @param[in] pathTo    New path
+     *
+     * @return If successful renamed, it will return true otherwise false.
+     */
     bool rename(const char* pathFrom, const char* pathTo)
     {
         std::string fullPathFrom = buildPath(pathFrom);
@@ -477,11 +629,26 @@ public:
         return (0 == std::rename(fullPathFrom.c_str(), fullPathTo.c_str()));
     }
 
+    /**
+     * Rename a file resp. directory.
+     *
+     * @param[in] pathFrom  Current path
+     * @param[in] pathTo    New path
+     *
+     * @return If successful renamed, it will return true otherwise false.
+     */
     bool rename(const String& pathFrom, const String& pathTo)
     {
         return rename(pathFrom.c_str(), pathTo.c_str());
     }
 
+    /**
+     * Create a directory.
+     *
+     * @param[in] path  Path, like the target uses it
+     *
+     * @return If successful created, it will return true otherwise false.
+     */
     bool mkdir(const char* path)
     {
         std::string fullPath = buildPath(path);
@@ -496,11 +663,25 @@ public:
         return (0 == result);
     }
 
+    /**
+     * Create a directory.
+     *
+     * @param[in] path  Path, like the target uses it
+     *
+     * @return If successful created, it will return true otherwise false.
+     */
     bool mkdir(const String& path)
     {
         return mkdir(path.c_str());
     }
 
+    /**
+     * Remove an empty directory.
+     *
+     * @param[in] path  Path, like the target uses it
+     *
+     * @return If successful removed, it will return true otherwise false.
+     */
     bool rmdir(const char* path)
     {
         std::string fullPath = buildPath(path);
@@ -515,6 +696,13 @@ public:
         return (0 == result);
     }
 
+    /**
+     * Remove an empty directory.
+     *
+     * @param[in] path  Path, like the target uses it
+     *
+     * @return If successful removed, it will return true otherwise false.
+     */
     bool rmdir(const String& path)
     {
         return rmdir(path.c_str());
@@ -594,6 +782,7 @@ using fs::SeekCur;
 using fs::SeekEnd;
 using fs::SeekSet;
 
+/** The filesystem of the native environment. */
 extern fs::FS NativeFS;
 
 /******************************************************************************

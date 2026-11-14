@@ -72,7 +72,9 @@
  * Prototypes
  *****************************************************************************/
 
+/** Application setup, provided by the application. */
 extern void        setup();
+/** Application loop, provided by the application. */
 extern void        loop();
 
 static const char* getWorkDir(int argc, char** argv);
