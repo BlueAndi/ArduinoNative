@@ -32,7 +32,8 @@ Aaaa ...> Arduino: <<use>>
 
 note bottom of Arduino
     Provides Arduino functionality
-    for the native environment.
+    for the native environment, including
+    the entry point main().
 end note
 
 @enduml

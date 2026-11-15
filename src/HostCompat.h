@@ -1,6 +1,6 @@
 /* MIT License
  *
- * Copyright (c) 2023 - 2025 Andreas Merkle <web@blue-andi.de>
+ * Copyright (c) 2023 - 2026 Andreas Merkle <web@blue-andi.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +25,33 @@
     DESCRIPTION
 *******************************************************************************/
 /**
- * @brief  Main entry point
+ * @file   HostCompat.h
+ * @brief  C library functions which are missing on some hosts
  * @author Andreas Merkle <web@blue-andi.de>
+ *
+ * The C library of the target provides functions, which are standardized by
+ * POSIX, but not by the C standard itself. Windows doesn't provide them,
+ * therefore they are implemented here. Linux and the target have them already.
+ *
+ * A consumer can force include this header in the native environment via the
+ * -include option of the compiler. That way the application and the libraries
+ * don't need a host specific include.
+ *
+ * @addtogroup Arduino
+ *
+ * @{
  */
+
+#ifndef HOSTCOMPAT_H
+#define HOSTCOMPAT_H
+
+/******************************************************************************
+ * Compile Switches
+ *****************************************************************************/
 
 /******************************************************************************
  * Includes
  *****************************************************************************/
-#include <stdio.h>
-#include <Arduino.h>
 #include <time.h>
 
 /******************************************************************************
@@ -45,71 +63,39 @@
  *****************************************************************************/
 
 /******************************************************************************
- * Prototypes
+ * Functions
  *****************************************************************************/
 
-static unsigned long getSystemTick();
-static void          systemDelay(unsigned long ms);
+#ifdef _WIN32
 
-/******************************************************************************
- * Variables
- *****************************************************************************/
-
-/******************************************************************************
- * External functions
- *****************************************************************************/
-
-/**
- * Main program entry point.
- *
- * @param[in] argc  Number of arguments
- * @param[in] argv  Array of arguments
- *
- * @return Status
- */
-extern int main(int argc, char** argv)
+#ifdef __cplusplus
+extern "C"
 {
-    /* Remove any buffering from stout and stderr to get the printed information immediately. */
-    (void)setvbuf(stdout, NULL, _IONBF, 0);
-    (void)setvbuf(stderr, NULL, _IONBF, 0);
-    
-    Arduino::setup(getSystemTick, systemDelay);
+#endif
 
-    while(1)
-    {
-        Arduino::loop();
-    }
+    /**
+     * Convert a date/time string to a broken down time, according to the given
+     * format.
+     *
+     * Counterpart of the POSIX strptime(). Only the conversion specifiers are
+     * supported, which the application uses. A unsupported one stops the
+     * conversion, like a mismatch does.
+     *
+     * @param[in]  str      Date/time string, which to convert.
+     * @param[in]  format   Format of the date/time string.
+     * @param[out] timeInfo Broken down time, only the converted parts are written.
+     *
+     * @return Pointer to the first character after the converted part or nullptr
+     *         in case the string doesn't match the format.
+     */
+    char* strptime(const char* str, const char* format, struct tm* timeInfo);
 
-    return 0;
+#ifdef __cplusplus
 }
+#endif
 
-/******************************************************************************
- * Local functions
- *****************************************************************************/
+#endif /* _WIN32 */
 
-/**
- * Get the system tick in ms.
- *
- * @return Timestamp (system tick) in ms
- */
-static unsigned long getSystemTick()
-{
-    clock_t now = clock();
+#endif /* HOSTCOMPAT_H */
 
-    return (now * 1000UL) / CLOCKS_PER_SEC;
-}
-
-/**
- * Delay for a specific time in ms.
- *
- * @param[in] ms    Time in ms.
- */
-static void systemDelay(unsigned long ms)
-{
-    unsigned long timestamp = millis();
-
-    while ((millis() - timestamp) < ms)
-    {
-        ;
-    }
-}
+/** @} */

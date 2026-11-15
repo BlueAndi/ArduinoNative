@@ -2,27 +2,42 @@
 
 autoactivate on
 
-participant main
-participant Arduino
+participant ArduinoMain
 participant App
 
--> main
+== Default entry point of the library ==
 
-    main -> Arduino : Arduino::setup()
+-> ArduinoMain : main()
+
+    ArduinoMain -> App : ::setup()
+    ArduinoMain <-- App
+
+    loop
+        ArduinoMain -> App : ::loop()
+        ArduinoMain <-- App
+    end loop
+
+== Application with own main() and own time base ==
+
+participant "main" as AppMain
+participant Arduino
+
+-> AppMain : main()
+
+    AppMain -> Arduino : Arduino::setup(getSystemTickFunc, systemDelayFunc)
 
         Arduino ->  App :   ::setup()
         Arduino <-- App
 
-    main <-- Arduino
+    AppMain <-- Arduino
 
     loop
-        main -> Arduino : Arduino::loop()
+        AppMain -> Arduino : Arduino::loop()
 
             Arduino ->  App :   ::loop()
             Arduino <-- App
 
-        main <-- Arduino
+        AppMain <-- Arduino
     end loop
-
 
 @enduml

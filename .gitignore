@@ -33,3 +33,6 @@
 
 # Build artifacts
 .pio
+
+# Temporary directories of the tests
+tmp_test_*/

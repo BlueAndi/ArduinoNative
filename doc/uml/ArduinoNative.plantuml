@@ -4,56 +4,60 @@ package "Library" as DeviceClasses {
 
   package "Interfaces" as Interfaces {
 
-    interface "Print" as iPrint {
-        + {abstract} print(str : const char[])  : void
+    abstract class "Print" as Print {
+        + {abstract} write(data : uint8_t) : size_t
+        + write(buffer : const uint8_t * , size : size_t ) : size_t
+        + write(str : const char* ) : size_t
+        + flush(void) : void
 
-        + {abstract} print(value : uint8_t)     : void
-        + {abstract} print(value : uint16_t)    : void
-        + {abstract} print(value : uint32_t)    : void
-
-        + {abstract} print(value : int8_t)      : void
-        + {abstract} print(value : int16_t)     : void
-        + {abstract} print(value : int32_t)     : void
-
-        '* with linefeed:  *'
-        + {abstract} println(str : const char[]) : void
-        + {abstract} println(value : uint8_t)    : void
-        + {abstract} println(value : uint16_t)   : void
-        + {abstract} println(value : uint32_t)   : void
-
-        + {abstract} println(value : int8_t)     : void
-        + {abstract} println(value : int16_t)    : void
-        + {abstract} println(value : int32_t)    : void
-
-        + {abstract} write(buffer : const uint8_t * , length: size_t ) : size_t
+        + print(...) : size_t
+        + println(...) : size_t
     }
 
-    interface "Stream" as iStream {
+    abstract class "Stream" as Stream {
         + {abstract} available(void) : int
-        + {abstract} readBytes(buffer : uint8_t *, length : size_t ) : size_t
+        + {abstract} read(void) : int
+        + {abstract} peek(void) : int
+
+        + setTimeout(timeout : unsigned long) : void
+        + getTimeout(void) : unsigned long
+        + readBytes(buffer : uint8_t *, length : size_t ) : size_t
     }
 
-    iStream <|-- iPrint : <<derive>>
+    Print <|-- Stream : <<derive>>
   }
 
 
 
-    class "Serial_" as Serial_ {
-        # Serial_(stream : Stream& )
-
-        + setStream(stream : Stream& )    : void
+    class "HardwareSerial" as HardwareSerial {
         + begin(baudrate : unsigned long) : void
         + end(void) : void
+        + setTxTimeoutMs(timeout : uint32_t) : void
+        + setStream(stream : Stream* ) : void
+
+        + write(data : uint8_t) : size_t
+        + write(buffer : const uint8_t * , size : size_t ) : size_t
+        + flush(void) : void
+        + available(void) : int
+        + read(void) : int
+        + peek(void) : int
     }
 
-    iPrint   <|.. Serial_ : <<realize>>
+    Stream <|-- HardwareSerial : <<derive>>
 
-    class "Terminal" as Terminal {
+    class "Serial" as Serial <<instance>> {
     }
 
-    iPrint  <|.. Terminal : <<realize>>
+    HardwareSerial <.. Serial : <<instantiate>>
 
+    class ConsoleCompat  <<namespace>>  {
+        + isInteractive(void) : bool
+        + enterRawMode(void) : bool
+        + restoreMode(void) : void
+        + readByte(void) : int
+    }
 
+    HardwareSerial ..> ConsoleCompat : <<use>>
 
     class Arduino  <<namespace>>  {
 
@@ -64,12 +68,18 @@ package "Library" as DeviceClasses {
         + loop () : void
     }
 
+    class ArduinoMain  {
+        + main(argc : int, argv : char**) : int
+    }
+
+    note bottom of ArduinoMain
+        Default entry point of the library,
+        used if the application has no main().
+        Supports the option --work-dir.
+    end note
+
 }
 ' ---  end of DeviceClasses
-
-    Terminal <-- Arduino  : <<instantiate>>
-    Serial_  <-- Arduino  : <<instantiate>>
-
 
     package Application {
 
@@ -78,15 +88,20 @@ package "Library" as DeviceClasses {
             + loop() : void
         }
 
+        ArduinoMain ..> App : <<call>>
+
         Arduino ..> App : <<call>>
 
-        class main {
+        class "main" as AppMain {
             + main(argc : int, argv : char**) : int
         }
 
-        Arduino <.. main :  <<use>>
-    }
+        note bottom of AppMain
+            Optional, if an own time base
+            is necessary, e.g. a simulation time.
+        end note
 
-}
+        Arduino <.. AppMain :  <<use>>
+    }
 
 @enduml

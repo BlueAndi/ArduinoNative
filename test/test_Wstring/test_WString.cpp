@@ -1,6 +1,6 @@
 /* MIT License
  *
- * Copyright (c) 2023 - 2025 Andreas Merkle <web@blue-andi.de>
+ * Copyright (c) 2023 - 2026 Andreas Merkle <web@blue-andi.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,6 +74,16 @@ static void testWStringConcat(void);
 /******************************************************************************
  * External Functions
  *****************************************************************************/
+
+/** Application setup, required by the library. */
+void setup()
+{
+}
+
+/** Application loop, required by the library. */
+void loop()
+{
+}
 
 /**
  * Main entry point

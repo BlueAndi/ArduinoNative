@@ -3,6 +3,21 @@ name: Test
 # Controls when the action will run.
 on: [push, workflow_dispatch]
 
+# The workflow only reads the repository.
+permissions:
+  contents: read
+
+# A superseded run on the same branch is cancelled, because its result is
+# obsolete as soon as a newer commit is pushed.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  # Pinned, because the result of clang-format depends on its version.
+  CLANG_FORMAT_VERSION: "22.1.8"
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # The introduction just shows some useful informations.
@@ -14,7 +29,7 @@ jobs:
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "The name of the branch is ${{ github.ref }} and the repository is ${{ github.repository }}."
 
-  test:
+  check_format:
     # The type of runner that the job will run on.
     runs-on: ubuntu-latest
     # Intro must run first
@@ -22,12 +37,41 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: '3.11'
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install clang-format
+        run: pip install clang-format==${{ env.CLANG_FORMAT_VERSION }}
+
+      - name: Run clang-format check
+        run: |
+          find src test examples \
+            \( -iname '*.h' -o -iname '*.hpp' -o -iname '*.cpp' \) \
+            -print | xargs -r clang-format --dry-run --Werror
+
+  test:
+    # The type of runner that the job will run on. The native environment
+    # has host specific code, therefore it is tested on Linux and Windows.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    # Intro must run first
+    needs: intro
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
           cache-dependency-path: .github/workflows/requirements.txt
 
@@ -35,6 +79,8 @@ jobs:
         run: pip install -r .github/workflows/requirements.txt
 
       - name: Perform static checks on native environment
+        # clang-tidy is not usable with the Windows toolchain.
+        if: runner.os == 'Linux'
         run: platformio check --environment native --fail-on-defect=medium --fail-on-defect=high
 
       - name: Run tests on native environment
